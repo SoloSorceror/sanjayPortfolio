@@ -8,6 +8,7 @@ const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [targetPosition, setTargetPosition] = useState({ x: 0, y: 0 });
   const [isPointer, setIsPointer] = useState(false);
+  const [isText, setIsText] = useState(false);
   const [isHidden, setIsHidden] = useState(true);
   const [isHero, setIsHero] = useState(false);
 
@@ -16,12 +17,14 @@ const CustomCursor = () => {
     setIsHidden(false);
 
     const target = e.target as HTMLElement;
-    const interactive = target.closest(
-      'a, button, [role="button"], input, textarea, [data-cursor-interactive]'
-    );
+    const interactive = target.closest('[data-cursor-interactive]');
     const heroSection = target.closest('#hero');
+    const textTarget = target.closest('[data-cursor-text]');
+    
     setIsPointer(!!interactive);
     setIsHero(!!heroSection);
+    setIsText(!!textTarget);
+
   }, []);
 
   const onMouseLeave = useCallback(() => setIsHidden(true), []);
@@ -51,6 +54,8 @@ const CustomCursor = () => {
       cancelAnimationFrame(animationFrameId);
     };
   }, [onMouseMove, onMouseLeave, onMouseEnter, targetPosition]);
+  
+  const showRocket = isHero && !isPointer;
 
   return (
     <div
@@ -64,20 +69,21 @@ const CustomCursor = () => {
           className={cn(
             'absolute w-8 h-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-accent transition-transform duration-300 ease-out',
             isPointer ? 'scale-150 opacity-50' : 'scale-100',
-            isHero ? 'opacity-0' : 'opacity-100',
+            showRocket ? 'opacity-0 scale-0' : 'opacity-100',
           )}
         />
         <div
           className={cn(
             'absolute w-2 h-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent transition-transform duration-300 ease-out',
             isPointer ? 'scale-0' : 'scale-100',
-            isHero ? 'opacity-0' : 'opacity-100',
+            showRocket ? 'opacity-0 scale-0' : 'opacity-100',
           )}
         />
         <Rocket 
            className={cn(
             'absolute -translate-x-1/2 -translate-y-1/2 text-accent transition-all duration-300 ease-out',
-            isHero ? 'opacity-100 scale-125' : 'opacity-0 scale-0'
+            showRocket ? 'opacity-100' : 'opacity-0 scale-0',
+            isText ? 'scale-150 -translate-y-8' : 'scale-100'
            )}
         />
     </div>

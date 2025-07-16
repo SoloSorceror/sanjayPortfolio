@@ -6,7 +6,6 @@ import Projects from '@/components/sections/projects';
 import Skills from '@/components/sections/skills';
 import Testimonials from '@/components/sections/testimonials';
 import Contact from '@/components/sections/contact';
-import { Separator } from '@/components/ui/separator';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
 import SectionBackground from '@/components/3d/section-background';
 
@@ -27,7 +26,7 @@ export default function Home() {
             </div>
         </ScrollAnimation>
 
-        <ScrollAnimation as="section" id="projects" className="relative bg-primary/5 py-16 md:py-24 min-h-screen flex flex-col justify-center">
+        <ScrollAnimation as="section" id="projects" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center">
           <SectionBackground effect="orbs" />
           <div className="container relative z-10">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">
