@@ -17,59 +17,41 @@ export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const observer = useRef<IntersectionObserver | null>(null);
-  const heroRef = useRef<HTMLElement | null>(null);
+  const sectionsRef = useRef<Map<string, HTMLElement> | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
-    
-    // Delay observer setup to prevent race condition on page load
-    const timer = setTimeout(() => {
-        if (observer.current) {
-            observer.current.disconnect();
-        }
 
-        const options = {
-            root: null,
-            rootMargin: "-150px 0px -50% 0px",
-            threshold: 0,
-        };
-
-        observer.current = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    setActiveLink(`#${entry.target.id}`);
-                }
-            });
-        }, options);
-
-        const sections = navLinks.map(link => document.querySelector(link.href)).filter(Boolean);
-        sections.forEach(sec => {
-            if(sec) observer.current?.observe(sec);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveLink(`#${entry.target.id}`);
+          }
         });
-        
-        heroRef.current = document.querySelector('#hero');
-        const heroObserver = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                setActiveLink('');
-            }
-        }, { threshold: 0.5 });
+      },
+      {
+        rootMargin: "-40% 0px -60% 0px",
+        threshold: 0,
+      }
+    );
 
-        if(heroRef.current) {
-            heroObserver.observe(heroRef.current);
+    const allNavLinks = [...navLinks, { href: '#hero', label: 'Hero' }];
+    const elements = allNavLinks.map(link => document.querySelector(link.href)).filter(Boolean) as HTMLElement[];
+    
+    elements.forEach((el) => {
+        if (el) {
+          observer.observe(el);
         }
+    });
 
-        return () => {
-            sections.forEach(sec => {
-                if(sec && observer.current) observer.current.unobserve(sec);
-            });
-            if(heroRef.current) {
-                heroObserver.unobserve(heroRef.current);
+    return () => {
+        elements.forEach((el) => {
+            if (el) {
+                observer.unobserve(el);
             }
-        };
-    }, 500);
-
-    return () => clearTimeout(timer);
+        });
+    };
 
   }, []);
 
@@ -77,13 +59,18 @@ export default function Header() {
     e.preventDefault();
     const targetElement = document.querySelector(href);
     if (targetElement) {
-        const top = targetElement.getBoundingClientRect().top + window.scrollY - 80;
+        let top = targetElement.getBoundingClientRect().top + window.scrollY;
+        // Adjust for sticky header height if not the hero section
+        if (href !== '#hero') {
+            top -= 80;
+        }
 
         window.scrollTo({
             top: top,
             behavior: 'smooth'
         });
 
+        // Manually set active link for immediate feedback
         setActiveLink(href);
         setIsSheetOpen(false);
     }
@@ -124,6 +111,9 @@ export default function Header() {
               </SheetTrigger>
               <SheetContent side="right">
                 <nav className="grid gap-6 text-lg font-medium mt-8">
+                  <a href="#hero" onClick={(e) => handleLinkClick(e, '#hero')} className="text-muted-foreground hover:text-foreground">
+                    Home
+                  </a>
                   {navLinks.map((link) => (
                     <a key={link.href} href={link.href} onClick={(e) => handleLinkClick(e, link.href)} className="text-muted-foreground hover:text-foreground">
                       {link.label}
