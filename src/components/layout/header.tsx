@@ -24,7 +24,7 @@ export default function Header() {
     
     const options = {
       root: null,
-      rootMargin: "-80px 0px -40% 0px", // Trigger when section is in the upper part of the viewport
+      rootMargin: "-150px 0px -50% 0px", // More precise trigger area
       threshold: 0,
     };
 
