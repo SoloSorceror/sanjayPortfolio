@@ -2,8 +2,26 @@
 
 import { Button } from '@/components/ui/button';
 import HeroAnimation from '@/components/3d/hero-animation';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Hero() {
+  const [opacity, setOpacity] = useState(1);
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const heroHeight = heroRef.current.offsetHeight;
+        const scrollPosition = window.scrollY;
+        const newOpacity = Math.max(0, 1 - (scrollPosition / (heroHeight * 0.8)));
+        setOpacity(newOpacity);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const targetElement = document.querySelector(href);
@@ -17,7 +35,12 @@ export default function Hero() {
   }
 
   return (
-    <section id="hero" className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+    <section 
+      id="hero" 
+      ref={heroRef}
+      className="relative w-full h-[100vh] min-h-[600px] flex items-center justify-center overflow-hidden transition-opacity duration-300"
+      style={{ opacity }}
+    >
        <div className="absolute inset-0 z-0">
         <HeroAnimation />
        </div>
