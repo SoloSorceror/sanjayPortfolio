@@ -1,0 +1,52 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import HeroAnimation from '@/components/3d/hero-animation';
+
+export default function Hero() {
+  return (
+    <section className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+       <div className="absolute inset-0 z-0">
+        <HeroAnimation />
+       </div>
+      <div className="container relative z-10 flex flex-col items-center text-center">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-500 animate-fade-in-up">
+          Sanjay Chetry
+        </h1>
+        <p className="max-w-2xl text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up animation-delay-300">
+          Full-Stack Developer & Machine Learning Enthusiast. I build modern, scalable web applications and explore the frontiers of AI.
+        </p>
+        <div className="flex space-x-4 animate-fade-in-up animation-delay-600">
+          <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+            <a href="#projects">View My Work</a>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <a href="#contact">Get In Touch</a>
+          </Button>
+        </div>
+      </div>
+       <style jsx>{`
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
+          opacity: 0;
+        }
+        .animation-delay-300 {
+          animation-delay: 0.3s;
+        }
+        .animation-delay-600 {
+          animation-delay: 0.6s;
+        }
+       `}</style>
+    </section>
+  );
+}
