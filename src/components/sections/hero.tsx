@@ -13,6 +13,7 @@ export default function Hero() {
       if (heroRef.current) {
         const heroHeight = heroRef.current.offsetHeight;
         const scrollPosition = window.scrollY;
+        // Start fading at 20% of hero height, be fully faded by 80%
         const newOpacity = Math.max(0, 1 - (scrollPosition / (heroHeight * 0.8)));
         setOpacity(newOpacity);
       }

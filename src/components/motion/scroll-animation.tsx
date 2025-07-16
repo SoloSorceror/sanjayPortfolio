@@ -14,14 +14,12 @@ export const ScrollAnimation = forwardRef<HTMLElement, ScrollAnimationProps>(
 
     useEffect(() => {
       const targetRef = (ref || internalRef) as React.RefObject<HTMLElement>;
-      const heroElement = document.getElementById('hero');
-      if (!targetRef.current || !heroElement) return;
+      if (!targetRef.current) return;
 
       const observer = new IntersectionObserver(
         ([entry]) => {
-          // Check if the hero section is out of view before showing the next section.
-          const heroRect = heroElement.getBoundingClientRect();
-          if (entry.isIntersecting && heroRect.bottom < 50) {
+          // Trigger the animation when the top of the element is visible
+          if (entry.isIntersecting) {
             setIsVisible(true);
             observer.unobserve(entry.target);
           }
@@ -29,7 +27,7 @@ export const ScrollAnimation = forwardRef<HTMLElement, ScrollAnimationProps>(
         {
           root: null,
           rootMargin: '0px',
-          threshold: 0.1,
+          threshold: 0.1, // Start animation when 10% of the element is visible
         }
       );
 
