@@ -8,6 +8,7 @@ import Testimonials from '@/components/sections/testimonials';
 import Contact from '@/components/sections/contact';
 import { Separator } from '@/components/ui/separator';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
+import SectionBackground from '@/components/3d/section-background';
 
 export default function Home() {
   return (
@@ -15,38 +16,52 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
-        <ScrollAnimation as="section" id="about" className="container py-16 md:py-24">
-            <h2 className="text-3xl font-bold text-center font-headline mb-12">
+
+        <ScrollAnimation as="section" id="about" className="relative container py-16 md:py-24">
+            <SectionBackground effect="orbs" />
+            <h2 className="relative z-10 text-3xl font-bold text-center font-headline mb-12">
                 About Me
             </h2>
             <About />
         </ScrollAnimation>
-        <ScrollAnimation as="section" id="projects" className="bg-primary/5 py-16 md:py-24">
-          <div className="container">
+
+        <ScrollAnimation as="section" id="projects" className="relative bg-primary/5 py-16 md:py-24">
+          <SectionBackground effect="orbs" />
+          <div className="container relative z-10">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">
               My Projects
             </h2>
             <Projects />
           </div>
         </ScrollAnimation>
+
         <ScrollAnimation as="div">
           <Skills />
         </ScrollAnimation>
-        <ScrollAnimation as="section" id="testimonials" className="container py-16 md:py-24">
-          <h2 className="text-3xl font-bold text-center font-headline mb-4">
-            What Others Say
-          </h2>
-          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-            A few kind words from colleagues and collaborators.
-          </p>
-          <Testimonials />
+
+        <ScrollAnimation as="section" id="testimonials" className="relative container py-16 md:py-24">
+          <SectionBackground effect="particles" />
+          <div className="relative z-10">
+            <h2 className="text-3xl font-bold text-center font-headline mb-4">
+              What Others Say
+            </h2>
+            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+              A few kind words from colleagues and collaborators.
+            </p>
+            <Testimonials />
+          </div>
         </ScrollAnimation>
+
         <Separator />
-        <ScrollAnimation as="section" id="contact" className="container py-16 md:py-24">
-           <h2 className="text-3xl font-bold text-center font-headline mb-12">
-            Get In Touch
-          </h2>
-          <Contact />
+        
+        <ScrollAnimation as="section" id="contact" className="relative container py-16 md:py-24">
+           <SectionBackground effect="particles" />
+           <div className="relative z-10">
+            <h2 className="text-3xl font-bold text-center font-headline mb-12">
+                Get In Touch
+            </h2>
+            <Contact />
+           </div>
         </ScrollAnimation>
       </main>
       <Footer />

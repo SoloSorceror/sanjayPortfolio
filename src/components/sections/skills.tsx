@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { SkillIcon } from "@/components/3d/skill-icon";
 import StaggeredReveal from "../motion/staggered-reveal";
 import { useEffect, useRef } from "react";
+import SectionBackground from "../3d/section-background";
 
 const skillCategories = [
     {
@@ -104,6 +105,7 @@ const SkillCard = ({ category, i }: { category: typeof skillCategories[0], i: nu
 export default function Skills() {
     return (
         <section id="skills" className="relative bg-primary/10 py-16 md:py-24 overflow-hidden" data-cursor="block">
+            <SectionBackground effect="grid" />
             <div className="container relative z-10">
                 <StaggeredReveal as="h2" className="text-3xl font-bold text-center font-headline mb-12">
                     Skills & Expertise

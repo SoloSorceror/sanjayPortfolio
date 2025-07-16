@@ -6,7 +6,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   cursor: none;
 }
-a, button, [role="button"], input, textarea {
+a, button, [role="button"], input, textarea, [data-cursor-interactive] {
   cursor: none;
 }
 

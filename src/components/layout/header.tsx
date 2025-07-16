@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
+  { href: '#hero', label: 'Home' },
   { href: '#about', label: 'About' },
   { href: '#projects', label: 'Projects' },
   { href: '#skills', label: 'Skills' },
@@ -15,26 +16,30 @@ const navLinks = [
 
 export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
-  const [activeLink, setActiveLink] = useState('');
+  const [activeLink, setActiveLink] = useState('#hero');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
 
     const handleScroll = () => {
+      const sections = navLinks.map(link => document.querySelector(link.href));
+      const scrollPosition = window.scrollY;
+
       let current = '';
-      for (const link of navLinks) {
-        const section = document.querySelector(link.href);
+      for (const section of sections) {
         if (section) {
           const sectionTop = (section as HTMLElement).offsetTop;
-          if (window.scrollY >= sectionTop - 150) {
-            current = link.href;
+          if (scrollPosition >= sectionTop - 150) {
+            current = `#${section.id}`;
           }
         }
       }
-      setActiveLink(current);
+      if (current) {
+        setActiveLink(current);
+      }
     };
-
+    
     window.addEventListener('scroll', handleScroll);
     handleScroll();
 
@@ -45,11 +50,14 @@ export default function Header() {
     e.preventDefault();
     const targetElement = document.querySelector(href);
     if (targetElement) {
+        // Set active link immediately on click
+        setActiveLink(href);
+        
         window.scrollTo({
             top: targetElement.getBoundingClientRect().top + window.scrollY - 80, // Offset for header height
             behavior: 'smooth'
         });
-        setActiveLink(href);
+
         setIsSheetOpen(false); // Close mobile sheet on click
     }
   }

@@ -18,10 +18,16 @@ export default function Hero() {
         </p>
         <div className="flex space-x-4 fade-in-up animation-delay-600">
           <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-            <a href="#projects">View My Work</a>
+            <a href="#projects" onClick={(e) => {
+              e.preventDefault();
+              document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' });
+            }}>View My Work</a>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <a href="#contact">Get In Touch</a>
+            <a href="#contact" onClick={(e) => {
+              e.preventDefault();
+              document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
+            }}>Get In Touch</a>
           </Button>
         </div>
       </div>
