@@ -31,7 +31,7 @@ const projectsData: Project[] = [
   {
     title: 'Spotify Recommender',
     description: 'A personalized music recommendation system using content-based filtering to suggest songs tailored to user preferences. Built to explore recommendation engines and lightweight ML logic.',
-    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2070&auto=format&fit=crop',
+    image: '/images/sr-recommender-logo.png',
     tags: ['Python', 'Pandas', 'scikit-learn', 'Streamlit'],
     liveUrl: '#',
     repoUrl: '#',
