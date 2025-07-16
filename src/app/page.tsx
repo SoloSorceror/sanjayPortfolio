@@ -52,13 +52,16 @@ export default function Home() {
               <About />
           </ScrollAnimation>
           
-          <section id="projects" className="relative py-16 md:py-24 z-10 overflow-hidden">
-            <div className="container">
-              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
+          <section id="projects" className="relative py-16 md:py-24 z-10 min-h-[500px] md:min-h-screen flex flex-col justify-center">
+            <div className="container text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-4">
                 My Projects
               </h2>
-              <Projects />
+              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Explore my work by navigating the asteroid field. Click on an asteroid to view project details.
+              </p>
             </div>
+            <Projects />
           </section>
 
           <ScrollAnimation as="div" id="skills" className="relative z-10">
