@@ -23,13 +23,26 @@ const CustomCursor = () => {
   
   const animationFrameRef = useRef<number>();
   const lastParticleTime = useRef(0);
-  const isPointerRef = useRef(false);
-  const isHeroRef = useRef(false);
+  const isPointerRef = useRef(isPointer);
+  const isHeroRef = useRef(isHero);
+  const positionRef = useRef(position);
+  const targetPositionRef = useRef(targetPosition);
 
   useEffect(() => {
     isPointerRef.current = isPointer;
+  }, [isPointer]);
+
+  useEffect(() => {
     isHeroRef.current = isHero;
-  }, [isPointer, isHero]);
+  }, [isHero]);
+
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
+
+  useEffect(() => {
+    targetPositionRef.current = targetPosition;
+  }, [targetPosition]);
   
   const onMouseMove = useCallback((e: MouseEvent) => {
     setTargetPosition({ x: e.clientX, y: e.clientY });
@@ -65,32 +78,24 @@ const CustomCursor = () => {
     document.body.addEventListener('mouseleave', onMouseLeave);
     document.body.addEventListener('mouseenter', onMouseEnter);
 
-    return () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.body.removeEventListener('mouseleave', onMouseLeave);
-      document.body.removeEventListener('mouseenter', onMouseEnter);
-    };
-  }, [onMouseMove, onMouseLeave, onMouseEnter]);
-
-  useEffect(() => {
     const animate = () => {
         setPosition(prevPos => ({
-            x: prevPos.x + (targetPosition.x - prevPos.x) * 0.15,
-            y: prevPos.y + (targetPosition.y - prevPos.y) * 0.15
+            x: prevPos.x + (targetPositionRef.current.x - prevPos.x) * 0.15,
+            y: prevPos.y + (targetPositionRef.current.y - prevPos.y) * 0.15
         }));
         
         setParticles(prevParticles => {
             const now = Date.now();
             let newParticles = [...prevParticles];
 
-            const distance = Math.hypot(targetPosition.x - position.x, targetPosition.y - position.y);
+            const distance = Math.hypot(targetPositionRef.current.x - positionRef.current.x, targetPositionRef.current.y - positionRef.current.y);
 
             if (isHeroRef.current && !isPointerRef.current && distance > 1 && now - lastParticleTime.current > 16) {
                 lastParticleTime.current = now;
                 newParticles.push({
                     id: now,
-                    x: position.x,
-                    y: position.y,
+                    x: positionRef.current.x,
+                    y: positionRef.current.y,
                     opacity: 1,
                     size: Math.random() * 2 + 1,
                 });
@@ -103,15 +108,17 @@ const CustomCursor = () => {
         
         animationFrameRef.current = requestAnimationFrame(animate);
     };
-
     animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
-        if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
-        }
+      document.removeEventListener('mousemove', onMouseMove);
+      document.body.removeEventListener('mouseleave', onMouseLeave);
+      document.body.removeEventListener('mouseenter', onMouseEnter);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
-}, [targetPosition, position.x, position.y]);
+  }, [onMouseMove, onMouseLeave, onMouseEnter]);
   
   const showRocket = isHero && !isPointer;
 
@@ -153,7 +160,7 @@ const CustomCursor = () => {
           />
           <Rocket 
              className={cn(
-              'absolute -translate-x-1/2 -translate-y-1/2 text-accent transition-all duration-300 ease-out',
+              'absolute -translate-x-1/2 -translate-y-1/2 text-accent transition-all duration-300 ease-out scale-x-[-1]',
               showRocket ? 'opacity-100' : 'opacity-0 scale-0',
               isText ? 'scale-150 -translate-y-8' : 'scale-100'
              )}
