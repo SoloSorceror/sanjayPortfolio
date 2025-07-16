@@ -12,20 +12,22 @@ import SectionBackground from '@/components/3d/section-background';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <main className="flex-1">
         <Hero />
 
-        <ScrollAnimation as="section" id="about" className="relative container py-16 md:py-24">
+        <ScrollAnimation as="section" id="about" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center">
             <SectionBackground effect="orbs" />
-            <h2 className="relative z-10 text-3xl font-bold text-center font-headline mb-12">
-                About Me
-            </h2>
-            <About />
+            <div className="container relative z-10">
+              <h2 className="text-3xl font-bold text-center font-headline mb-12">
+                  About Me
+              </h2>
+              <About />
+            </div>
         </ScrollAnimation>
 
-        <ScrollAnimation as="section" id="projects" className="relative bg-primary/5 py-16 md:py-24">
+        <ScrollAnimation as="section" id="projects" className="relative bg-primary/5 py-16 md:py-24 min-h-screen flex flex-col justify-center">
           <SectionBackground effect="orbs" />
           <div className="container relative z-10">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">
@@ -35,13 +37,13 @@ export default function Home() {
           </div>
         </ScrollAnimation>
 
-        <ScrollAnimation as="div">
+        <ScrollAnimation as="div" id="skills" className="min-h-screen flex flex-col justify-center">
           <Skills />
         </ScrollAnimation>
 
-        <ScrollAnimation as="section" id="testimonials" className="relative container py-16 md:py-24">
+        <ScrollAnimation as="section" id="testimonials" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center">
           <SectionBackground effect="particles" />
-          <div className="relative z-10">
+          <div className="container relative z-10">
             <h2 className="text-3xl font-bold text-center font-headline mb-4">
               What Others Say
             </h2>
@@ -51,12 +53,10 @@ export default function Home() {
             <Testimonials />
           </div>
         </ScrollAnimation>
-
-        <Separator />
         
-        <ScrollAnimation as="section" id="contact" className="relative container py-16 md:py-24">
+        <ScrollAnimation as="section" id="contact" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center">
            <SectionBackground effect="particles" />
-           <div className="relative z-10">
+           <div className="container relative z-10">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">
                 Get In Touch
             </h2>

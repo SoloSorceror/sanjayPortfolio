@@ -2,11 +2,10 @@
 import { CodeXml, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '#hero', label: 'Home' },
   { href: '#about', label: 'About' },
   { href: '#projects', label: 'Projects' },
   { href: '#skills', label: 'Skills' },
@@ -16,32 +15,37 @@ const navLinks = [
 
 export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
-  const [activeLink, setActiveLink] = useState('#hero');
+  const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const isClickScrolling = useRef(false);
 
   useEffect(() => {
     setIsMounted(true);
 
     const handleScroll = () => {
-      const sections = navLinks.map(link => document.querySelector(link.href));
-      const scrollPosition = window.scrollY;
+        if (isClickScrolling.current) return;
 
-      let current = '';
-      for (const section of sections) {
-        if (section) {
-          const sectionTop = (section as HTMLElement).offsetTop;
-          if (scrollPosition >= sectionTop - 150) {
-            current = `#${section.id}`;
-          }
+        const sections = navLinks.map(link => document.querySelector(link.href));
+        const scrollPosition = window.scrollY;
+
+        let current = '#hero';
+        for (const section of sections) {
+            if (section) {
+                const sectionTop = (section as HTMLElement).offsetTop;
+                if (scrollPosition >= sectionTop - 100) { // Adjusted offset
+                    current = `#${section.id}`;
+                }
+            }
         }
-      }
-      if (current) {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+            current = '#contact';
+        }
+
         setActiveLink(current);
-      }
     };
     
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -50,22 +54,29 @@ export default function Header() {
     e.preventDefault();
     const targetElement = document.querySelector(href);
     if (targetElement) {
-        // Set active link immediately on click
         setActiveLink(href);
+        isClickScrolling.current = true;
         
+        const top = targetElement.getBoundingClientRect().top + window.scrollY - 80;
+
         window.scrollTo({
-            top: targetElement.getBoundingClientRect().top + window.scrollY - 80, // Offset for header height
+            top: top,
             behavior: 'smooth'
         });
 
-        setIsSheetOpen(false); // Close mobile sheet on click
+        // Use a timeout to reset the flag after the scroll is likely complete
+        setTimeout(() => {
+            isClickScrolling.current = false;
+        }, 1000);
+
+        setIsSheetOpen(false);
     }
   }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <a href="#" onClick={(e) => handleLinkClick(e, '#hero')} className="mr-6 flex items-center space-x-2">
+        <a href="#hero" onClick={(e) => handleLinkClick(e, '#hero')} className="mr-6 flex items-center space-x-2">
           <CodeXml className="h-6 w-6 text-accent" />
           <span className="font-bold font-headline">SanjayChetry.IO</span>
         </a>
