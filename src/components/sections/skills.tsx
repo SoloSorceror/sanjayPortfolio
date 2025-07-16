@@ -9,43 +9,43 @@ import SectionBackground from "../3d/section-background";
 
 const skillCategories = [
     {
-        title: "Programming Languages",
+        title: "Programming & Core CS",
         iconType: "code",
         skills: [
-            { name: "C++", level: 90 },
-            { name: "Java", level: 85 },
-            { name: "Python", level: 95 },
-            { name: "JavaScript (ES6+)", level: 80 },
+            { name: "C++, Java, Python, JavaScript (ES6+)", level: 90 },
+            { name: "Data Structures & Algorithms", level: 90 },
+            { name: "Problem Solving & Competitive Programming", level: 85 },
+            { name: "Clean Architecture Principles", level: 80 },
         ],
     },
     {
-        title: "Web Development",
+        title: "Full-Stack Development",
         iconType: "settings",
         skills: [
             { name: "React.js, Next.js", level: 85 },
             { name: "Node.js, Express.js", level: 80 },
-            { name: "HTML, CSS, Tailwind", level: 95 },
-            { name: "MongoDB, REST APIs", level: 75 },
+            { name: "MongoDB, Mongoose, REST APIs", level: 75 },
+            { name: "End-to-end App Development", level: 90 },
         ],
     },
     {
         title: "AI & Machine Learning",
         iconType: "bot",
         skills: [
+            { name: "LangChain & OpenAI API Integration", level: 85 },
+            { name: "Prompt Engineering & AI Agents", level: 85 },
             { name: "Scikit-learn, Pandas, NumPy", level: 90 },
-            { name: "LangChain, OpenAI API", level: 80 },
-            { name: "Prompt Engineering", level: 85 },
             { name: "Vector DBs (Chroma, Pinecone)", level: 70 },
         ],
     },
     {
-        title: "DevOps & Core Concepts",
+        title: "DevOps & Cloud",
         iconType: "database",
         skills: [
+            { name: "Docker, Kubernetes, GCP", level: 75 },
             { name: "Git, GitHub Actions, CI/CD", level: 85 },
-            { name: "Docker", level: 75 },
-            { name: "DSA & Problem Solving", level: 90 },
-            { name: "Clean Architecture", level: 80 },
+            { name: "NGINX Ingress & SSL Integration", level: 70 },
+            { name: "Vercel, Netlify, Postman", level: 90 },
         ],
     },
 ] as const;
@@ -104,8 +104,7 @@ const SkillCard = ({ category, i }: { category: typeof skillCategories[0], i: nu
 
 export default function Skills() {
     return (
-        <section id="skills" className="relative bg-primary/10 py-16 md:py-24 overflow-hidden" data-cursor="block">
-            <SectionBackground effect="particles" />
+        <section id="skills" className="relative bg-primary/10 py-16 md:py-24" data-cursor="block">
             <div className="container relative z-10">
                 <StaggeredReveal as="h2" className="text-3xl font-bold text-center font-headline mb-12">
                     Skills & Expertise

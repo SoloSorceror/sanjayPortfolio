@@ -17,16 +17,12 @@ export default function Home() {
         <Hero />
         <div className="relative">
           <SectionBackground effect="particles" />
-          <ScrollAnimation as="section" id="about" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center z-10">
-              <div className="container">
-                <h2 className="text-3xl font-bold text-center font-headline mb-12">
-                    About Me
-                </h2>
-                <About />
-              </div>
+
+          <ScrollAnimation as="section" id="about" className="relative z-10">
+              <About />
           </ScrollAnimation>
 
-          <ScrollAnimation as="section" id="projects" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center z-10">
+          <ScrollAnimation as="section" id="projects" className="relative py-16 md:py-24 z-10">
             <div className="container">
               <h2 className="text-3xl font-bold text-center font-headline mb-12">
                 My Projects
@@ -35,11 +31,11 @@ export default function Home() {
             </div>
           </ScrollAnimation>
 
-          <ScrollAnimation as="div" id="skills" className="min-h-screen flex flex-col justify-center relative z-10">
+          <ScrollAnimation as="div" id="skills" className="relative z-10">
             <Skills />
           </ScrollAnimation>
           
-          <ScrollAnimation as="section" id="contact" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center z-10">
+          <ScrollAnimation as="section" id="contact" className="relative py-16 md:py-24 z-10">
              <div className="container">
               <h2 className="text-3xl font-bold text-center font-headline mb-12">
                   Get In Touch
