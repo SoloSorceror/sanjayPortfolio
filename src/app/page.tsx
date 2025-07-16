@@ -11,7 +11,28 @@ import Testimonials from '@/components/sections/testimonials';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
 import SectionBackground from '@/components/3d/section-background';
 import { InteractiveAsteroids } from '@/components/3d/interactive-asteroids';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, forwardRef } from 'react';
+
+const FadingHero = forwardRef<HTMLElement>((props, ref) => {
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!ref || !('current' in ref) || !ref.current) return;
+            const heroHeight = ref.current.offsetHeight || window.innerHeight;
+            const scrollY = window.scrollY;
+            const opacity = Math.max(0, 1 - (scrollY / (heroHeight * 0.7)));
+            ref.current.style.opacity = `${opacity}`;
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [ref]);
+
+    return <Hero ref={ref} />;
+});
+FadingHero.displayName = 'FadingHero';
+
 
 export default function Home() {
     const heroRef = useRef<HTMLElement>(null);
@@ -19,13 +40,9 @@ export default function Home() {
     
     useEffect(() => {
         const handleScroll = () => {
-            if (!heroRef.current) return;
+            if (!mainContentRef.current || !heroRef.current) return;
             const heroHeight = heroRef.current.offsetHeight || window.innerHeight;
             const scrollY = window.scrollY;
-            const opacity = Math.max(0, 1 - (scrollY / (heroHeight * 0.7)));
-            
-            heroRef.current.style.opacity = `${opacity}`;
-
             if (mainContentRef.current) {
                 const contentOpacity = Math.min(1, Math.max(0, (scrollY - heroHeight * 0.5) / (heroHeight * 0.4)));
                  mainContentRef.current.style.opacity = `${contentOpacity}`;
@@ -33,7 +50,7 @@ export default function Home() {
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
+        handleScroll(); // Initial call
 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -43,7 +60,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <Hero ref={heroRef} />
+        <FadingHero ref={heroRef} />
 
         <div ref={mainContentRef} className="relative opacity-0">
           <SectionBackground effect="particles" />
