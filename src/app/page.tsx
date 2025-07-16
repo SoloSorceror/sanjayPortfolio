@@ -14,21 +14,6 @@ import { InteractiveAsteroids } from '@/components/3d/interactive-asteroids';
 import { useEffect, useRef, forwardRef } from 'react';
 
 const FadingHero = forwardRef<HTMLElement>((props, ref) => {
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!ref || !('current' in ref) || !ref.current) return;
-            const heroHeight = ref.current.offsetHeight || window.innerHeight;
-            const scrollY = window.scrollY;
-            const opacity = Math.max(0, 1 - (scrollY / (heroHeight * 0.7)));
-            ref.current.style.opacity = `${opacity}`;
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
-
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [ref]);
-
     return <Hero ref={ref} />;
 });
 FadingHero.displayName = 'FadingHero';
@@ -40,10 +25,16 @@ export default function Home() {
     
     useEffect(() => {
         const handleScroll = () => {
-            if (!mainContentRef.current || !heroRef.current) return;
-            const heroHeight = heroRef.current.offsetHeight || window.innerHeight;
-            const scrollY = window.scrollY;
+            if (heroRef.current) {
+                const heroHeight = heroRef.current.offsetHeight;
+                const scrollY = window.scrollY;
+                const opacity = Math.max(0, 1 - (scrollY / (heroHeight * 0.7)));
+                heroRef.current.style.opacity = `${opacity}`;
+            }
+
             if (mainContentRef.current) {
+                const heroHeight = heroRef.current?.offsetHeight || window.innerHeight;
+                const scrollY = window.scrollY;
                 const contentOpacity = Math.min(1, Math.max(0, (scrollY - heroHeight * 0.5) / (heroHeight * 0.4)));
                  mainContentRef.current.style.opacity = `${contentOpacity}`;
             }
