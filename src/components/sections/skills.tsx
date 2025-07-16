@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { SkillIcon } from "@/components/3d/skill-icon";
 import StaggeredReveal from "../motion/staggered-reveal";
 import { useEffect, useRef } from "react";
+import SectionBackground from "../3d/section-background";
 
 const skillCategories = [
     {

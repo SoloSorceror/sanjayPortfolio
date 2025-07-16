@@ -11,6 +11,7 @@ import Testimonials from '@/components/sections/testimonials';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
 import SectionBackground from '@/components/3d/section-background';
 import { useEffect, useRef, forwardRef } from 'react';
+import { InteractiveAsteroids } from '@/components/3d/interactive-asteroids';
 
 const FadingHero = forwardRef<HTMLElement>((props, ref) => {
     return <Hero ref={ref} />;
@@ -59,6 +60,20 @@ export default function Home() {
           </ScrollAnimation>
           
           <Projects />
+
+          <section id="asteroid-game" className="relative py-16 md:py-24 z-10">
+            <div className="container text-center">
+              <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">
+                Feeling Adventurous?
+              </h2>
+              <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Take a break and click on the asteroids to watch them explode. A small demo of interactive 3D graphics.
+              </p>
+              <div className="relative w-full h-[50vh] rounded-lg overflow-hidden border border-border/20 bg-primary/5">
+                <InteractiveAsteroids />
+              </div>
+            </div>
+          </section>
           
           <ScrollAnimation as="div" id="skills" className="relative z-10">
             <Skills />

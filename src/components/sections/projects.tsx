@@ -127,8 +127,7 @@ const ProjectDetails = ({ project }: { project: Project }) => {
 const Projects = () => {
     const mountRef = useRef<HTMLDivElement>(null);
     const [selectedProject, setSelectedProject] = useState<Project>(projectsData[0]);
-    const robotsRef = useRef<(THREE.Group & { originalPosition?: THREE.Vector3 })[]>([]);
-    const sceneRef = useRef<{ scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer } | null>(null);
+    const robotsRef = useRef<(THREE.Group & { originalPosition?: THREE.Vector3, originalRotation?: THREE.Euler })[]>([]);
     const [hoveredRobot, setHoveredRobot] = useState<THREE.Object3D | null>(null);
 
     const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
@@ -154,8 +153,6 @@ const Projects = () => {
         renderer.setPixelRatio(window.devicePixelRatio);
         currentMount.appendChild(renderer.domElement);
 
-        sceneRef.current = { scene, camera, renderer };
-
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         scene.add(ambientLight);
         const pointLight = new THREE.PointLight(0xBE77FF, 10, 100);
@@ -164,14 +161,7 @@ const Projects = () => {
 
         robotsRef.current = projectsData.map((project, i) => {
             const robot = createRobotMesh();
-            
-            const angle = (i / projectsData.length) * Math.PI * 2;
-            const radius = 5;
-            robot.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
-            robot.lookAt(scene.position);
-            
             robot.userData = { projectData: project, index: i };
-            robot.originalPosition = robot.position.clone();
             scene.add(robot);
             return robot;
         });
@@ -201,7 +191,9 @@ const Projects = () => {
         const onClick = () => {
             if (hoveredRobot) {
                 const robotData = (hoveredRobot as THREE.Group).userData;
-                setSelectedProject(robotData.projectData);
+                if (robotData.projectData.title !== selectedProject.title) {
+                    setSelectedProject(robotData.projectData);
+                }
             }
         };
 
@@ -213,23 +205,32 @@ const Projects = () => {
             const delta = clock.getDelta();
 
             robotsRef.current.forEach(robot => {
-                 // Orbiting logic
-                if (robot.originalPosition) {
-                    const angle = (performance.now() * 0.0002) + (robot.userData.index / projectsData.length) * Math.PI * 2;
-                    const radius = 5;
-                    robot.originalPosition.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
-                }
+                 const isSelected = robot.userData.projectData.title === selectedProject.title;
+                 const isHovered = robot === hoveredRobot;
+                 
+                 let targetPosition = new THREE.Vector3();
+                 let targetScale = new THREE.Vector3(1, 1, 1);
+                 
+                 if(isSelected) {
+                     targetPosition.set(0, 0, 3);
+                     targetScale.set(1.5, 1.5, 1.5);
+                 } else {
+                    const orbitingRobots = robotsRef.current.filter(r => r.userData.projectData.title !== selectedProject.title);
+                    const indexInOrbit = orbitingRobots.findIndex(r => r === robot);
+                    const angle = (performance.now() * 0.0002) + (indexInOrbit / orbitingRobots.length) * Math.PI * 2;
+                    const radius = 6;
+                    targetPosition.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius - 2);
+                 }
 
-                // If not selected, follow the orbit
-                if(robot.userData.projectData.title !== selectedProject.title) {
-                    robot.position.lerp(robot.originalPosition!, 0.05);
-                }
-                
-                robot.lookAt(scene.position);
+                 if (isHovered && !isSelected) {
+                    targetScale.multiplyScalar(1.2);
+                 }
 
-                const isHovered = robot === hoveredRobot;
-                const targetScale = isHovered ? 1.2 : 1.0;
-                robot.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+                 robot.position.lerp(targetPosition, 0.05);
+                 robot.scale.lerp(targetScale, 0.1);
+                 robot.rotation.y += delta * 0.2;
+                 robot.lookAt(camera.position);
+
             });
 
             renderer.render(scene, camera);
@@ -253,33 +254,6 @@ const Projects = () => {
             }
         };
     }, [onResize, selectedProject]);
-
-
-    useEffect(() => {
-        if (!sceneRef.current) return;
-        const { camera } = sceneRef.current;
-        const selectedRobot = robotsRef.current.find(r => r.userData.projectData.title === selectedProject.title);
-        
-        if (selectedRobot) {
-            const targetPosition = new THREE.Vector3().setFromMatrixPosition(selectedRobot.matrixWorld);
-            targetPosition.y += 2;
-            targetPosition.z += 4; 
-
-            gsap.to(camera.position, {
-                x: targetPosition.x,
-                y: targetPosition.y,
-                z: targetPosition.z,
-                duration: 1.5,
-                ease: "power3.inOut"
-            });
-            gsap.to(camera.rotation, {
-                y: camera.rotation.y, // Maintain some of the existing rotation to avoid jarring snaps
-                duration: 1.5,
-                ease: "power3.inOut"
-            });
-        }
-    }, [selectedProject]);
-
 
     return (
         <section id="projects" className="relative py-16 md:py-24 z-10 min-h-screen flex flex-col justify-center">
