@@ -72,7 +72,7 @@ export default function Hero() {
           className="max-w-2xl text-lg md:text-xl text-muted-foreground mb-8 fade-in-up animation-delay-300 transition-transform duration-300 ease-out"
           style={{ transform: `translate(${transform.x * 15}px, ${transform.y * 15}px)` }}
         >
-          Full-Stack Developer bridging software engineering with intelligent systems.
+          Full-Stack Engineer with a specialization in Machine Learning, building intelligent applications from front-end to deployment.
         </p>
         <div 
           className="flex space-x-4 fade-in-up animation-delay-600 transition-transform duration-300 ease-out"
