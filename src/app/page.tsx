@@ -8,7 +8,6 @@ import Contact from '@/components/sections/contact';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
 import SectionBackground from '@/components/3d/section-background';
 import { InteractiveAsteroids } from '@/components/3d/interactive-asteroids';
-import Testimonials from '@/components/sections/testimonials';
 
 export default function Home() {
   return (
@@ -18,11 +17,9 @@ export default function Home() {
         <Hero />
         <div className="relative">
           <SectionBackground effect="particles" />
-
           <ScrollAnimation as="section" id="about" className="relative z-10">
               <About />
           </ScrollAnimation>
-
           <ScrollAnimation as="section" id="projects" className="relative py-16 md:py-24 z-10">
             <div className="container">
               <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
@@ -31,20 +28,9 @@ export default function Home() {
               <Projects />
             </div>
           </ScrollAnimation>
-
           <ScrollAnimation as="div" id="skills" className="relative z-10">
             <Skills />
           </ScrollAnimation>
-          
-           <ScrollAnimation as="section" id="testimonials" className="relative py-16 md:py-24 z-10">
-            <div className="container">
-              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
-                What Others Say
-              </h2>
-              <Testimonials />
-            </div>
-          </ScrollAnimation>
-
           <ScrollAnimation as="section" id="contact" className="relative py-16 md:py-24 z-10">
              <div className="container">
               <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
