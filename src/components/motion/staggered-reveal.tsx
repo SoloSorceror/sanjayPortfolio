@@ -36,13 +36,14 @@ const StaggeredReveal = forwardRef<HTMLElement, StaggeredRevealProps>(
       };
     }, [ref]);
 
-    const renderChildren = (nodes: ReactNode, delayBase: number): ReactNode[] => {
+    const renderChildren = (nodes: ReactNode): ReactNode[] => {
       return Children.map(nodes, (child, index) => {
         if (!isValidElement(child)) {
           return child;
         }
 
-        const newDelay = delayBase + index * staggerDelay;
+        const delay = index * staggerDelay;
+        
         const childProps = {
           ...child.props,
           className: cn(
@@ -52,12 +53,12 @@ const StaggeredReveal = forwardRef<HTMLElement, StaggeredRevealProps>(
           ),
           style: {
             ...child.props.style,
-            transitionDelay: `${newDelay}ms`,
+            transitionDelay: `${delay}ms`,
           },
         };
 
         if (child.props.children) {
-          const grandChildren = renderChildren(child.props.children, newDelay);
+          const grandChildren = renderChildren(child.props.children);
           return cloneElement(child, childProps, grandChildren);
         }
         
@@ -65,10 +66,10 @@ const StaggeredReveal = forwardRef<HTMLElement, StaggeredRevealProps>(
       });
     };
 
-    if(Children.count(children) > 1 || (isValidElement(children) && Children.count(children.props.children) > 1)) {
+    if (Children.count(children) > 1 || (isValidElement(children) && Children.count(children.props.children) > 1)) {
        return (
          <Component ref={ref || internalRef} className={className} {...props}>
-          {renderChildren(children, 0)}
+          {renderChildren(children)}
         </Component>
        );
     }
