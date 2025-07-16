@@ -17,7 +17,7 @@ export default function Home() {
         <Hero />
 
         <ScrollAnimation as="section" id="about" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center">
-            <SectionBackground effect="orbs" />
+            <SectionBackground effect="particles" />
             <div className="container relative z-10">
               <h2 className="text-3xl font-bold text-center font-headline mb-12">
                   About Me
@@ -27,7 +27,7 @@ export default function Home() {
         </ScrollAnimation>
 
         <ScrollAnimation as="section" id="projects" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center">
-          <SectionBackground effect="orbs" />
+          <SectionBackground effect="particles" />
           <div className="container relative z-10">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">
               My Projects

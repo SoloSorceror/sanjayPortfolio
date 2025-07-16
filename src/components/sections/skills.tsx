@@ -105,7 +105,7 @@ const SkillCard = ({ category, i }: { category: typeof skillCategories[0], i: nu
 export default function Skills() {
     return (
         <section id="skills" className="relative bg-primary/10 py-16 md:py-24 overflow-hidden" data-cursor="block">
-            <SectionBackground effect="grid" />
+            <SectionBackground effect="particles" />
             <div className="container relative z-10">
                 <StaggeredReveal as="h2" className="text-3xl font-bold text-center font-headline mb-12">
                     Skills & Expertise
