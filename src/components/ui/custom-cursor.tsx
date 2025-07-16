@@ -14,9 +14,20 @@ const CustomCursor = () => {
 
   const onMouseMove = useCallback((e: MouseEvent) => {
     setTargetPosition({ x: e.clientX, y: e.clientY });
-    setIsHidden(false);
-
+    
     const target = e.target as HTMLElement;
+    const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+    
+    setIsHidden(isInput);
+
+    if (isInput) {
+        setIsPointer(false);
+        setIsHero(false);
+        setIsText(false);
+        return;
+    }
+
+    setIsHidden(false);
     const interactive = target.closest('[data-cursor-interactive]');
     const heroSection = target.closest('#hero');
     const textTarget = target.closest('[data-cursor-text]');
