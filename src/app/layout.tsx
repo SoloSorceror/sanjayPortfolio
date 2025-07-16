@@ -6,6 +6,21 @@ import CustomCursor from '@/components/ui/custom-cursor';
 export const metadata: Metadata = {
   title: 'SanjayChetry.IO',
   description: 'Personal portfolio of Sanjay Chetry, showcasing projects and skills.',
+    openGraph: {
+    title: 'SanjayChetry.IO',
+    description: 'Personal portfolio of Sanjay Chetry, showcasing projects and skills.',
+    url: 'https://sanjay-portfolio-my6y.vercel.app/', // Replace with your actual domain
+    siteName: 'SanjayChetry.IO',
+    images: [
+      {
+        url: '/favicon.png', // Points to public/og-image.png
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
