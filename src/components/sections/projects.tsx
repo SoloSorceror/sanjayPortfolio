@@ -4,16 +4,20 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Github } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Badge } from '@/components/ui/badge';
+import { AnimatePresence, motion } from 'framer-motion';
 
-const projectsData = [
+type Project = {
+    title: string;
+    description: string;
+    image: string;
+    tags: string[];
+    liveUrl: string;
+    repoUrl: string;
+    aiHint: string;
+};
+
+const projectsData: Project[] = [
   {
     title: 'DayFlow.ai – Smart Productivity Tracker',
     description: 'A full-featured productivity platform that blends smart planning with mindful living. Helps users structure their day, stay focused, and reflect effectively.',
@@ -52,9 +56,49 @@ const projectsData = [
   },
 ];
 
+const ProjectDetails = ({ project }: { project: Project }) => {
+    if (!project) return null;
+
+    return (
+        <motion.div
+            key={project.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            className="w-full h-full p-4 md:p-6"
+        >
+            <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
+                <Image src={project.image} alt={project.title} layout="fill" className="object-cover" data-ai-hint={project.aiHint} />
+            </div>
+            <h3 className="font-headline text-2xl mb-2">{project.title}</h3>
+            <p className="text-muted-foreground mb-4">{project.description}</p>
+            <div className="flex flex-wrap gap-2 py-4">
+                {project.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary">{tag}</Badge>
+                ))}
+            </div>
+            <div className="flex justify-end gap-4 mt-4">
+                <Button asChild variant="outline">
+                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="mr-2 h-4 w-4" /> Live
+                    </a>
+                </Button>
+                <Button asChild variant="ghost" className="text-accent">
+                    <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                        <Github className="mr-2 h-4 w-4"/> Source
+                    </a>
+                </Button>
+            </div>
+        </motion.div>
+    );
+};
+
 const Projects = () => {
     const mountRef = useRef<HTMLDivElement>(null);
-    const [selectedProject, setSelectedProject] = useState<(typeof projectsData[0]) | null>(null);
+    const [selectedProject, setSelectedProject] = useState<Project>(projectsData[0]);
+    const planetsRef = useRef<THREE.Mesh[]>([]);
+    const targetRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 0, 15));
 
     const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
         if (!mountRef.current) return;
@@ -63,6 +107,29 @@ const Projects = () => {
         camera.updateProjectionMatrix();
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     }, []);
+
+    const createPlanetTexture = (color: THREE.Color) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const context = canvas.getContext('2d');
+        if (!context) return null;
+
+        const lighterColor = color.clone().multiplyScalar(1.5);
+        const darkerColor = color.clone().multiplyScalar(0.5);
+
+        for (let i = 0; i < 10000; i++) {
+            const x = Math.random() * 256;
+            const y = Math.random() * 256;
+            const radius = Math.random() * 1.5;
+            const grad = context.createRadialGradient(x, y, 0, x, y, radius);
+            grad.addColorStop(0, `rgba(${lighterColor.r*255}, ${lighterColor.g*255}, ${lighterColor.b*255}, ${Math.random() * 0.5})`);
+            grad.addColorStop(1, `rgba(${darkerColor.r*255}, ${darkerColor.g*255}, ${darkerColor.b*255}, 0)`);
+            context.fillStyle = grad;
+            context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+        }
+        return new THREE.CanvasTexture(canvas);
+    }
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -83,75 +150,67 @@ const Projects = () => {
         pointLight.position.set(10, 10, 10);
         scene.add(pointLight);
 
-        const asteroids: THREE.Group[] = [];
-        const asteroidGeometry = new THREE.IcosahedronGeometry(1, 1);
+        const planetGeometry = new THREE.SphereGeometry(1, 32, 32);
         
-        projectsData.forEach((project, i) => {
+        planetsRef.current = projectsData.map((project, i) => {
+            const color = new THREE.Color(`hsl(${271 + i * 25}, 100%, 74%)`);
+            const texture = createPlanetTexture(color);
             const material = new THREE.MeshStandardMaterial({ 
-                color: new THREE.Color(`hsl(${271 + i * 15}, 100%, 74%)`),
-                roughness: 0.6,
-                metalness: 0.3
+                map: texture,
+                color: color,
+                roughness: 0.7,
+                metalness: 0.1
             });
-            const asteroid = new THREE.Mesh(asteroidGeometry, material);
+            const planet = new THREE.Mesh(planetGeometry, material);
             
-            const group = new THREE.Group();
-            group.add(asteroid);
-            group.position.set(
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 10 - 5
-            );
-            group.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+            const angle = (i / projectsData.length) * Math.PI * 2;
+            const radius = 6;
+            planet.position.set(Math.cos(angle) * radius, (Math.random() - 0.5) * 4, Math.sin(angle) * radius);
             
-            const scale = Math.random() * 0.8 + 0.5;
-            group.scale.set(scale, scale, scale);
+            const scale = Math.random() * 0.8 + 0.8;
+            planet.scale.set(scale, scale, scale);
             
-            (group as any).velocity = new THREE.Vector3(
-                (Math.random() - 0.5) * 0.005,
-                (Math.random() - 0.5) * 0.005,
-                (Math.random() - 0.5) * 0.005
-            );
-
-            (group as any).projectData = project;
-            asteroids.push(group);
-            scene.add(group);
+            (planet.userData as any).projectData = project;
+            scene.add(planet);
+            return planet;
         });
 
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
 
         const onClick = (event: MouseEvent) => {
-            const rect = renderer.domElement.getBoundingClientRect();
+            if (!currentMount) return;
+            const rect = currentMount.getBoundingClientRect();
             mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
             
             raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(asteroids.map(g => g.children[0]));
+            const intersects = raycaster.intersectObjects(planetsRef.current);
 
             if (intersects.length > 0) {
-                const intersectedObject = intersects[0].object;
-                const parentGroup = intersectedObject.parent as THREE.Group & { projectData: typeof projectsData[0] };
-                if (parentGroup) {
-                    setSelectedProject(parentGroup.projectData);
+                const intersectedObject = intersects[0].object as THREE.Mesh;
+                if (intersectedObject.userData.projectData) {
+                    setSelectedProject(intersectedObject.userData.projectData);
+                    const targetPosition = intersectedObject.position.clone();
+                    targetPosition.z += 5; // Zoom in a bit
+                    targetRef.current.copy(targetPosition);
                 }
             }
         };
 
         const clock = new THREE.Clock();
+        let animationFrameId: number;
+
         const animate = () => {
-            requestAnimationFrame(animate);
+            animationFrameId = requestAnimationFrame(animate);
             const delta = clock.getDelta();
 
-            asteroids.forEach(asteroid => {
-                asteroid.position.add((asteroid as any).velocity);
-                asteroid.rotation.x += 0.0005;
-                asteroid.rotation.y += 0.0005;
-
-                if (asteroid.position.x > 20) asteroid.position.x = -20;
-                if (asteroid.position.x < -20) asteroid.position.x = 20;
-                if (asteroid.position.y > 15) asteroid.position.y = -15;
-                if (asteroid.position.y < -15) asteroid.position.y = 15;
+            planetsRef.current.forEach(planet => {
+                planet.rotation.y += 0.001;
             });
+            
+            camera.position.lerp(targetRef.current, 0.05);
+            camera.lookAt(0, 0, 0);
             
             renderer.render(scene, camera);
         };
@@ -162,53 +221,37 @@ const Projects = () => {
         currentMount.addEventListener('click', onClick);
 
         return () => {
+            cancelAnimationFrame(animationFrameId);
             window.removeEventListener('resize', handleResize);
             if (currentMount) {
                 currentMount.removeEventListener('click', onClick);
-                currentMount.removeChild(renderer.domElement);
+                if (renderer.domElement.parentElement === currentMount) {
+                  currentMount.removeChild(renderer.domElement);
+                }
             }
         };
 
     }, [onResize]);
 
     return (
-        <div className="relative w-full h-[50vh] md:h-[60vh] cursor-pointer">
-            <div ref={mountRef} className="absolute inset-0" />
-            <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
-                <DialogContent className="max-w-xl">
-                    {selectedProject && (
-                        <>
-                        <DialogHeader>
-                             <div className="relative h-48 md:h-64 w-full mb-4 overflow-hidden rounded-lg">
-                                <Image src={selectedProject.image} alt={selectedProject.title} layout="fill" className="object-cover" data-ai-hint={selectedProject.aiHint} />
-                            </div>
-                            <DialogTitle className="font-headline text-2xl">{selectedProject.title}</DialogTitle>
-                            <DialogDescription>
-                                {selectedProject.description}
-                            </DialogDescription>
-                        </DialogHeader>
-                         <div className="flex flex-wrap gap-2 py-4">
-                            {selectedProject.tags.map((tag) => (
-                                <Badge key={tag} variant="secondary">{tag}</Badge>
-                            ))}
-                        </div>
-                        <div className="flex justify-end gap-4">
-                            <Button asChild variant="outline">
-                                <a href={selectedProject.liveUrl} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="mr-2 h-4 w-4" /> Live
-                                </a>
-                            </Button>
-                            <Button asChild variant="ghost" className="text-accent">
-                                <a href={selectedProject.repoUrl} target="_blank" rel="noopener noreferrer">
-                                    <Github className="mr-2 h-4 w-4"/> Source
-                                </a>
-                            </Button>
-                        </div>
-                        </>
-                    )}
-                </DialogContent>
-            </Dialog>
-        </div>
+        <section id="projects" className="relative py-16 md:py-24 z-10 min-h-screen flex flex-col justify-center">
+             <div className="container text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-4">
+                My Projects
+              </h2>
+              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Explore my work by navigating my project solar system. Click on a planet to view its details.
+              </p>
+            </div>
+            <div className="container grid md:grid-cols-2 gap-8 items-center min-h-[60vh]">
+                <div ref={mountRef} className="relative w-full h-[40vh] md:h-[60vh] cursor-pointer" />
+                <div className="relative w-full h-full min-h-[40vh] md:min-h-[60vh] bg-primary/5 rounded-lg flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                       {selectedProject && <ProjectDetails project={selectedProject} />}
+                    </AnimatePresence>
+                </div>
+            </div>
+        </section>
     );
 };
 

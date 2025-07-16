@@ -19,13 +19,12 @@ export default function Home() {
     
     useEffect(() => {
         const handleScroll = () => {
-            const heroHeight = heroRef.current?.offsetHeight ?? window.innerHeight;
+            if (!heroRef.current) return;
+            const heroHeight = heroRef.current.offsetHeight || window.innerHeight;
             const scrollY = window.scrollY;
             const opacity = Math.max(0, 1 - (scrollY / (heroHeight * 0.7)));
             
-            if (heroRef.current) {
-                (heroRef.current as HTMLElement).style.opacity = `${opacity}`;
-            }
+            heroRef.current.style.opacity = `${opacity}`;
 
             if (mainContentRef.current) {
                 const contentOpacity = Math.min(1, Math.max(0, (scrollY - heroHeight * 0.5) / (heroHeight * 0.4)));
@@ -52,17 +51,7 @@ export default function Home() {
               <About />
           </ScrollAnimation>
           
-          <section id="projects" className="relative py-16 md:py-24 z-10 min-h-[500px] md:min-h-screen flex flex-col justify-center">
-            <div className="container text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-4">
-                My Projects
-              </h2>
-              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Explore my work by navigating the asteroid field. Click on an asteroid to view project details.
-              </p>
-            </div>
-            <Projects />
-          </section>
+          <Projects />
 
           <ScrollAnimation as="div" id="skills" className="relative z-10">
             <Skills />
