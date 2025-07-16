@@ -7,7 +7,7 @@ import Skills from '@/components/sections/skills';
 import Testimonials from '@/components/sections/testimonials';
 import Contact from '@/components/sections/contact';
 import { Separator } from '@/components/ui/separator';
-import StaggeredReveal from '@/components/motion/staggered-reveal';
+import { ScrollAnimation } from '@/components/motion/scroll-animation';
 
 export default function Home() {
   return (
@@ -15,43 +15,39 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
-        <section id="about" className="container py-16 md:py-24">
-            <StaggeredReveal as="h2" className="text-3xl font-bold text-center font-headline mb-12">
+        <ScrollAnimation as="section" id="about" className="container py-16 md:py-24">
+            <h2 className="text-3xl font-bold text-center font-headline mb-12">
                 About Me
-            </StaggeredReveal>
-            <StaggeredReveal>
-              <About />
-            </StaggeredReveal>
-        </section>
-        <section id="projects" className="bg-primary/5 py-16 md:py-24" data-cursor="block">
+            </h2>
+            <About />
+        </ScrollAnimation>
+        <ScrollAnimation as="section" id="projects" className="bg-primary/5 py-16 md:py-24" data-cursor="block">
           <div className="container">
-            <StaggeredReveal as="h2" className="text-3xl font-bold text-center font-headline mb-12">
+            <h2 className="text-3xl font-bold text-center font-headline mb-12">
               My Projects
-            </StaggeredReveal>
+            </h2>
             <Projects />
           </div>
-        </section>
-        <Skills />
-        <section id="testimonials" className="container py-16 md:py-24" data-cursor="block">
-          <StaggeredReveal as="h2" className="text-3xl font-bold text-center font-headline mb-4">
+        </ScrollAnimation>
+        <ScrollAnimation as="div">
+          <Skills />
+        </ScrollAnimation>
+        <ScrollAnimation as="section" id="testimonials" className="container py-16 md:py-24" data-cursor="block">
+          <h2 className="text-3xl font-bold text-center font-headline mb-4">
             What Others Say
-          </StaggeredReveal>
-          <StaggeredReveal as="p" className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+          </h2>
+          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
             A few kind words from colleagues and collaborators.
-          </StaggeredReveal>
-          <StaggeredReveal>
-            <Testimonials />
-          </StaggeredReveal>
-        </section>
+          </p>
+          <Testimonials />
+        </ScrollAnimation>
         <Separator />
-        <section id="contact" className="container py-16 md:py-24" data-cursor="block">
-           <StaggeredReveal as="h2" className="text-3xl font-bold text-center font-headline mb-12">
+        <ScrollAnimation as="section" id="contact" className="container py-16 md:py-24" data-cursor="block">
+           <h2 className="text-3xl font-bold text-center font-headline mb-12">
             Get In Touch
-          </StaggeredReveal>
-          <StaggeredReveal>
-            <Contact />
-          </StaggeredReveal>
-        </section>
+          </h2>
+          <Contact />
+        </ScrollAnimation>
       </main>
       <Footer />
     </div>
