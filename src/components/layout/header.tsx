@@ -23,50 +23,53 @@ export default function Header() {
   useEffect(() => {
     setIsMounted(true);
     
-    // Disconnect previous observer if it exists
-    if (observer.current) {
-        observer.current.disconnect();
-    }
-
-    const options = {
-      root: null,
-      rootMargin: "-20% 0px -80% 0px", // Highlights when section is in the top 20% of the viewport
-      threshold: 0,
-    };
-
-    observer.current = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                setActiveLink(`#${entry.target.id}`);
-            }
-        });
-    }, options);
-
-    const sections = navLinks.map(link => document.querySelector(link.href)).filter(Boolean);
-    sections.forEach(sec => {
-        if(sec) observer.current?.observe(sec);
-    });
-    
-    // Special observer for hero to set active link to empty when at top
-    heroRef.current = document.querySelector('#hero');
-    const heroObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-            setActiveLink('');
+    // Delay observer setup to prevent race condition on page load
+    const timer = setTimeout(() => {
+        if (observer.current) {
+            observer.current.disconnect();
         }
-    }, { threshold: 0.5 });
 
-    if(heroRef.current) {
-        heroObserver.observe(heroRef.current);
-    }
+        const options = {
+            root: null,
+            rootMargin: "-150px 0px -50% 0px",
+            threshold: 0,
+        };
 
-    return () => {
-      sections.forEach(sec => {
-          if(sec) observer.current?.unobserve(sec);
-      });
-       if(heroRef.current) {
-        heroObserver.unobserve(heroRef.current);
-      }
-    };
+        observer.current = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActiveLink(`#${entry.target.id}`);
+                }
+            });
+        }, options);
+
+        const sections = navLinks.map(link => document.querySelector(link.href)).filter(Boolean);
+        sections.forEach(sec => {
+            if(sec) observer.current?.observe(sec);
+        });
+        
+        heroRef.current = document.querySelector('#hero');
+        const heroObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                setActiveLink('');
+            }
+        }, { threshold: 0.5 });
+
+        if(heroRef.current) {
+            heroObserver.observe(heroRef.current);
+        }
+
+        return () => {
+            sections.forEach(sec => {
+                if(sec && observer.current) observer.current.unobserve(sec);
+            });
+            if(heroRef.current) {
+                heroObserver.unobserve(heroRef.current);
+            }
+        };
+    }, 100);
+
+    return () => clearTimeout(timer);
 
   }, []);
 
@@ -81,7 +84,6 @@ export default function Header() {
             behavior: 'smooth'
         });
 
-        // Manually set active link on click for immediate feedback
         setActiveLink(href);
         setIsSheetOpen(false);
     }
