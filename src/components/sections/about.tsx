@@ -38,7 +38,7 @@ const aboutData = {
 
 export default function About() {
   return (
-    <Card className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm">
+    <Card className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm" data-cursor-interactive>
       <CardContent className="p-6">
         <Tabs defaultValue="bio" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6">
