@@ -49,6 +49,9 @@ export default function Contact() {
 
     return (
         <div className="max-w-2xl mx-auto">
+            <p className="text-center text-muted-foreground mb-8">
+                Let’s build something great together. I'm open to collaboration and new opportunities.
+            </p>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField

@@ -1,31 +1,34 @@
-import { Github, Linkedin, FileDown } from 'lucide-react';
+import { Github, Linkedin, Mail, Code, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function Footer() {
-  const year = new Date().getFullYear();
+const socialLinks = [
+  { name: 'GitHub', icon: Github, url: 'https://github.com/SoloSorceror' },
+  { name: 'LinkedIn', icon: Linkedin, url: 'https://www.linkedin.com/in/sanjaychetry/' },
+  { name: 'LeetCode', icon: Code, url: 'https://leetcode.com/u/SoLoSorceror/' },
+  { name: 'Kaggle', icon: BarChart, url: 'https://www.kaggle.com/sanjaychetry' },
+  { name: 'Email', icon: Mail, url: 'mailto:sanjaychetry1043@gmail.com' },
+];
 
+export default function Footer() {
   return (
     <footer className="bg-primary/5">
-      <div className="container py-8 flex flex-col md:flex-row items-center justify-between">
-        <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-          &copy; {year} Sanjay Chetry. All rights reserved.
-        </p>
+      <div className="container py-8 flex flex-col md:flex-row items-center justify-between text-center md:text-left">
+        <div className="mb-4 md:mb-0">
+            <p className="text-sm text-muted-foreground">
+                &copy; {new Date().getFullYear()} Sanjay Chetry. All rights reserved.
+            </p>
+            <p className="text-sm text-accent italic mt-1">
+              "Code with clarity. Build with balance. Grow with intent."
+            </p>
+        </div>
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="icon" asChild>
-            <a href="https://github.com/sanjaychetry" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-              <Github className="h-5 w-5" />
-            </a>
-          </Button>
-          <Button variant="ghost" size="icon" asChild>
-            <a href="https://linkedin.com/in/sanjay-chetry" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-              <Linkedin className="h-5 w-5" />
-            </a>
-          </Button>
-          <Button variant="ghost" size="icon" asChild>
-            <a href="/sanjay-chetry-resume.pdf" download aria-label="Download Resume">
-              <FileDown className="h-5 w-5" />
-            </a>
-          </Button>
+          {socialLinks.map((link) => (
+             <Button key={link.name} variant="ghost" size="icon" asChild>
+                <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={link.name}>
+                    <link.icon className="h-5 w-5" />
+                </a>
+            </Button>
+          ))}
         </div>
       </div>
     </footer>

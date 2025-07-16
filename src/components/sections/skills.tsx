@@ -9,43 +9,43 @@ import SectionBackground from "../3d/section-background";
 
 const skillCategories = [
     {
-        title: "Languages",
+        title: "Programming Languages",
         iconType: "code",
         skills: [
-            { name: "C / C++", level: 90 },
+            { name: "C++", level: 90 },
             { name: "Java", level: 85 },
             { name: "Python", level: 95 },
-            { name: "JavaScript / TypeScript", level: 80 },
+            { name: "JavaScript (ES6+)", level: 80 },
         ],
     },
     {
-        title: "Frontend & Backend",
+        title: "Web Development",
         iconType: "settings",
         skills: [
-            { name: "MERN Stack (MongoDB, Express, React, Node.js)", level: 85 },
-            { name: "Next.js", level: 80 },
-            { name: "HTML & CSS", level: 95 },
-            { name: "SQL Databases", level: 75 },
+            { name: "React.js, Next.js", level: 85 },
+            { name: "Node.js, Express.js", level: 80 },
+            { name: "HTML, CSS, Tailwind", level: 95 },
+            { name: "MongoDB, REST APIs", level: 75 },
         ],
     },
     {
-        title: "Machine Learning",
+        title: "AI & Machine Learning",
         iconType: "bot",
         skills: [
-            { name: "Scikit-learn", level: 90 },
-            { name: "TensorFlow / Keras", level: 70 },
-            { name: "Pandas & NumPy", level: 95 },
-            { name: "Data Science & Analysis", level: 85 },
+            { name: "Scikit-learn, Pandas, NumPy", level: 90 },
+            { name: "LangChain, OpenAI API", level: 80 },
+            { name: "Prompt Engineering", level: 85 },
+            { name: "Vector DBs (Chroma, Pinecone)", level: 70 },
         ],
     },
     {
-        title: "Core Concepts",
+        title: "DevOps & Core Concepts",
         iconType: "database",
         skills: [
-            { name: "Data Structures & Algorithms (DSA)", level: 90 },
-            { name: "Object-Oriented Programming (OOP)", level: 85 },
-            { name: "Database Management Systems (DBMS)", level: 80 },
-            { name: "Operating Systems", level: 70 },
+            { name: "Git, GitHub Actions, CI/CD", level: 85 },
+            { name: "Docker", level: 75 },
+            { name: "DSA & Problem Solving", level: 90 },
+            { name: "Clean Architecture", level: 80 },
         ],
     },
 ] as const;

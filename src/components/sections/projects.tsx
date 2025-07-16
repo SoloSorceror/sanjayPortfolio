@@ -9,40 +9,40 @@ import StaggeredReveal from '../motion/staggered-reveal';
 
 const projects = [
   {
-    title: 'MERN E-commerce Platform',
-    description: 'A full-featured e-commerce site built with the MERN stack, including product listings, shopping cart, and user authentication.',
+    title: 'DayFlow.ai – Smart Productivity Tracker',
+    description: 'A full-featured productivity platform that blends smart planning with mindful living. Helps users structure their day, stay focused, and reflect effectively.',
     image: 'https://placehold.co/600x400.png',
-    tags: ['React', 'Node.js', 'Express', 'MongoDB'],
+    tags: ['Next.js', 'LangChain', 'OpenAI', 'MongoDB', 'Docker'],
     liveUrl: '#',
-    repoUrl: '#',
-    aiHint: 'ecommerce website',
+    repoUrl: 'https://github.com/SoloSorceror/DayFlow.ai',
+    aiHint: 'productivity dashboard AI',
   },
   {
-    title: 'ML Movie Recommender',
-    description: 'A recommendation system using collaborative filtering to suggest movies to users based on their ratings history.',
+    title: 'Spotify Recommender',
+    description: 'A personalized music recommendation system using content-based filtering to suggest songs tailored to user preferences.',
     image: 'https://placehold.co/600x400.png',
-    tags: ['Python', 'scikit-learn', 'Pandas', 'Flask'],
+    tags: ['Python', 'Pandas', 'scikit-learn', 'Streamlit'],
     liveUrl: '#',
     repoUrl: '#',
-    aiHint: 'movie database',
+    aiHint: 'music streaming interface',
   },
   {
-    title: 'Data Structures Visualizer',
-    description: 'An interactive web app to visualize common data structures and algorithms, helping students learn computer science concepts.',
+    title: 'Medical Diagnosis ML App',
+    description: 'Predicts potential diseases based on patient biological data using logistic regression. Focused on preprocessing, feature scaling, and accuracy.',
     image: 'https://placehold.co/600x400.png',
-    tags: ['Java', 'Spring Boot', 'React', 'DSA'],
+    tags: ['Python', 'scikit-learn', 'Pandas', 'Matplotlib'],
     liveUrl: '#',
     repoUrl: '#',
-    aiHint: 'data algorithm',
+    aiHint: 'medical data chart',
   },
    {
     title: 'Personal Portfolio Website',
-    description: 'My personal space on the internet. You are here right now! Built with Next.js, Tailwind CSS, and Three.js for 3D animations.',
+    description: 'Fully responsive, animated personal website to showcase my work and skills. Designed with simplicity, accessibility, and fluid user experience in mind.',
     image: 'https://placehold.co/600x400.png',
-    tags: ['Next.js', 'React', 'Tailwind CSS', 'Three.js'],
+    tags: ['Next.js', 'React', 'Tailwind CSS', 'Three.js', 'Framer Motion'],
     liveUrl: '#',
     repoUrl: '#',
-    aiHint: 'abstract code',
+    aiHint: 'abstract code animation',
   },
 ];
 
@@ -116,7 +116,7 @@ export default function Projects() {
       </div>
       <StaggeredReveal className="mt-16 text-center">
         <Button asChild size="lg">
-          <a href="https://github.com/sanjaychetry" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/SoloSorceror" target="_blank" rel="noopener noreferrer">
             View More on GitHub <ArrowRight className="ml-2 h-4 w-4" />
           </a>
         </Button>

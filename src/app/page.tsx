@@ -4,7 +4,6 @@ import Hero from '@/components/sections/hero';
 import About from '@/components/sections/about';
 import Projects from '@/components/sections/projects';
 import Skills from '@/components/sections/skills';
-import Testimonials from '@/components/sections/testimonials';
 import Contact from '@/components/sections/contact';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
 import SectionBackground from '@/components/3d/section-background';
@@ -38,18 +37,6 @@ export default function Home() {
 
           <ScrollAnimation as="div" id="skills" className="min-h-screen flex flex-col justify-center relative z-10">
             <Skills />
-          </ScrollAnimation>
-
-          <ScrollAnimation as="section" id="testimonials" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center z-10">
-            <div className="container">
-              <h2 className="text-3xl font-bold text-center font-headline mb-4">
-                What Others Say
-              </h2>
-              <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-                A few kind words from colleagues and collaborators.
-              </p>
-              <Testimonials />
-            </div>
           </ScrollAnimation>
           
           <ScrollAnimation as="section" id="contact" className="relative py-16 md:py-24 min-h-screen flex flex-col justify-center z-10">

@@ -53,7 +53,7 @@ export default function Hero() {
           Sanjay Chetry
         </h1>
         <p className="max-w-2xl text-lg md:text-xl text-muted-foreground mb-8 fade-in-up animation-delay-300">
-          Full-Stack Developer & Machine Learning Enthusiast. I build modern, scalable web applications and explore the frontiers of AI.
+          Full-Stack Developer bridging software engineering with intelligent systems.
         </p>
         <div className="flex space-x-4 fade-in-up animation-delay-600">
           <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" data-cursor-interactive>
