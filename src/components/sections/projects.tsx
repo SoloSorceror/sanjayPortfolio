@@ -22,7 +22,7 @@ const projectsData: Project[] = [
   {
     title: 'DayFlow.ai – Smart Productivity Tracker',
     description: 'A full-featured productivity platform that blends smart planning with mindful living. Helps users structure their day, stay focused, and reflect effectively.',
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://pixabay.com/illustrations/workflow-planning-process-8935726/',
     tags: ['Next.js', 'LangChain', 'OpenAI', 'MongoDB', 'Docker', 'GitHub Actions'],
     liveUrl: '#',
     repoUrl: 'https://github.com/SoloSorceror/DayFlow.ai',
@@ -31,7 +31,7 @@ const projectsData: Project[] = [
   {
     title: 'Spotify Recommender',
     description: 'A personalized music recommendation system using content-based filtering to suggest songs tailored to user preferences. Built to explore recommendation engines and lightweight ML logic.',
-    image: '/images/sr-recommender-logo.png',
+    image: 'https://pixabay.com/illustrations/music-relax-headphone-1813100/',
     tags: ['Python', 'Pandas', 'scikit-learn', 'Streamlit'],
     liveUrl: '#',
     repoUrl: '#',
@@ -40,7 +40,7 @@ const projectsData: Project[] = [
   {
     title: 'Medical Diagnosis ML App',
     description: 'Predicts potential diseases based on patient biological data using logistic regression. Focused on preprocessing, feature scaling, and accuracy.',
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://pixabay.com/illustrations/human-skeleton-human-body-anatomy-163715/',
     tags: ['Python', 'scikit-learn', 'Pandas', 'Matplotlib'],
     liveUrl: '#',
     repoUrl: '#',
@@ -49,7 +49,7 @@ const projectsData: Project[] = [
    {
     title: 'Personal Portfolio Website',
     description: 'Fully responsive, animated personal website to showcase my work and skills. Designed with simplicity, accessibility, and fluid user experience in mind.',
-    image: 'https://images.unsplash.com/photo-1550089423-6467143e0964?q=80&w=1974&auto=format&fit=crop',
+    image: 'https://pixabay.com/photos/milky-way-night-sky-stars-559641/',
     tags: ['Next.js', 'React', 'Tailwind CSS', 'Three.js', 'Framer Motion'],
     liveUrl: '#',
     repoUrl: '#',
