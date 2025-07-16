@@ -18,13 +18,19 @@ export default function Header() {
   const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
+  const heroRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
     
+    // Disconnect previous observer if it exists
+    if (observer.current) {
+        observer.current.disconnect();
+    }
+
     const options = {
       root: null,
-      rootMargin: "-150px 0px -50% 0px", // More precise trigger area
+      rootMargin: "-20% 0px -80% 0px", // Highlights when section is in the top 20% of the viewport
       threshold: 0,
     };
 
@@ -36,19 +42,30 @@ export default function Header() {
         });
     }, options);
 
-    const sections = navLinks.map(link => document.querySelector(link.href));
+    const sections = navLinks.map(link => document.querySelector(link.href)).filter(Boolean);
     sections.forEach(sec => {
         if(sec) observer.current?.observe(sec);
     });
     
-    const heroElement = document.querySelector('#hero');
-    if(heroElement) observer.current.observe(heroElement);
+    // Special observer for hero to set active link to empty when at top
+    heroRef.current = document.querySelector('#hero');
+    const heroObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            setActiveLink('');
+        }
+    }, { threshold: 0.5 });
+
+    if(heroRef.current) {
+        heroObserver.observe(heroRef.current);
+    }
 
     return () => {
       sections.forEach(sec => {
           if(sec) observer.current?.unobserve(sec);
       });
-      if(heroElement) observer.current?.unobserve(heroElement);
+       if(heroRef.current) {
+        heroObserver.unobserve(heroRef.current);
+      }
     };
 
   }, []);

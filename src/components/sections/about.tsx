@@ -78,35 +78,39 @@ export default function About() {
                         </Card>
                     </TabsContent>
                     <TabsContent value="experience">
-                        <div className="space-y-6">
-                            {aboutData.experience.map((item, index) => (
-                                <div key={index} className="relative pl-6">
-                                    <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-accent" />
-                                    <p className="font-semibold">{item.role}</p>
-                                    <p className="text-sm text-accent">{item.company}</p>
-                                    <p className="text-xs text-muted-foreground mb-2">{item.duration}</p>
-                                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                                </div>
-                            ))}
-                        </div>
+                         <StaggeredReveal>
+                            <div className="space-y-6 min-h-[420px]">
+                                {aboutData.experience.map((item, index) => (
+                                    <div key={index} className="relative pl-6">
+                                        <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-accent" />
+                                        <p className="font-semibold">{item.role}</p>
+                                        <p className="text-sm text-accent">{item.company}</p>
+                                        <p className="text-xs text-muted-foreground mb-2">{item.duration}</p>
+                                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </StaggeredReveal>
                     </TabsContent>
                     <TabsContent value="education">
-                    <div className="space-y-6">
-                            {aboutData.education.map((item, index) => (
-                                <div key={index} className="relative pl-6">
-                                    <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-accent" />
-                                    <p className="font-semibold">{item.degree}</p>
-                                    <p className="text-sm text-accent">{item.institution}</p>
-                                    <p className="text-xs text-muted-foreground mb-2">{item.duration}</p>
-                                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                                </div>
-                            ))}
-                        </div>
-                         <Button asChild className="mt-6" variant="outline">
-                            <a href="https://www.linkedin.com/in/sanjaychetry/details/certifications/" target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="mr-2 h-4 w-4"/> View Certificates
-                            </a>
-                        </Button>
+                        <StaggeredReveal>
+                            <div className="space-y-6 min-h-[420px]">
+                                {aboutData.education.map((item, index) => (
+                                    <div key={index} className="relative pl-6">
+                                        <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-accent" />
+                                        <p className="font-semibold">{item.degree}</p>
+                                        <p className="text-sm text-accent">{item.institution}</p>
+                                        <p className="text-xs text-muted-foreground mb-2">{item.duration}</p>
+                                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                                    </div>
+                                ))}
+                                 <Button asChild className="mt-6" variant="outline">
+                                    <a href="https://www.linkedin.com/in/sanjaychetry/details/certifications/" target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="mr-2 h-4 w-4"/> View Certificates
+                                    </a>
+                                </Button>
+                            </div>
+                        </StaggeredReveal>
                     </TabsContent>
                 </Tabs>
             </StaggeredReveal>
