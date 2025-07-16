@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { SkillIcon } from "@/components/3d/skill-icon";
+import StaggeredReveal from "../motion/staggered-reveal";
 
 const skillCategories = [
     {
@@ -48,26 +49,28 @@ const skillCategories = [
 export default function Skills() {
     return (
         <div className="grid md:grid-cols-2 gap-8">
-            {skillCategories.map((category) => (
-                <Card key={category.title} className="bg-card/50 backdrop-blur-sm">
-                    <CardHeader className="flex flex-row items-center gap-4">
-                        <SkillIcon icon={category.iconType} size={40} className="shrink-0" />
-                        <CardTitle className="font-headline">{category.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="space-y-4">
-                            {category.skills.map((skill) => (
-                                <li key={skill.name}>
-                                    <div className="flex justify-between mb-1">
-                                        <span className="text-sm font-medium text-foreground/80">{skill.name}</span>
-                                        <span className="text-sm text-muted-foreground">{skill.level}%</span>
-                                    </div>
-                                    <Progress value={skill.level} className="h-2 [&>div]:bg-accent" />
-                                </li>
-                            ))}
-                        </ul>
-                    </CardContent>
-                </Card>
+            {skillCategories.map((category, i) => (
+                <StaggeredReveal key={category.title} style={{transitionDelay: `${i * 150}ms`}}>
+                    <Card className="bg-card/50 backdrop-blur-sm h-full">
+                        <CardHeader className="flex flex-row items-center gap-4">
+                            <SkillIcon icon={category.iconType} size={40} className="shrink-0" />
+                            <CardTitle className="font-headline">{category.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ul className="space-y-4">
+                                {category.skills.map((skill, j) => (
+                                    <StaggeredReveal as="li" key={skill.name} style={{transitionDelay: `${(i * 150) + ((j + 1) * 75)}ms`}}>
+                                        <div className="flex justify-between mb-1">
+                                            <span className="text-sm font-medium text-foreground/80">{skill.name}</span>
+                                            <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                                        </div>
+                                        <Progress value={skill.level} className="h-2 [&>div]:bg-accent" />
+                                    </StaggeredReveal>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                </StaggeredReveal>
             ))}
         </div>
     );

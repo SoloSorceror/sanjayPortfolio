@@ -30,28 +30,31 @@ const HeroAnimation = () => {
     currentMount.appendChild(renderer.domElement);
 
     // Particles
-    const particlesCount = 7000;
+    const particlesCount = 10000;
     const positions = new Float32Array(particlesCount * 3);
     for (let i = 0; i < particlesCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 15;
+      positions[i] = (Math.random() - 0.5) * 20;
     }
     const particlesGeometry = new THREE.BufferGeometry();
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.008,
+      size: 0.012,
       color: '#BE77FF',
       transparent: true,
       blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
 
     // Mouse tracking
     const mouse = new THREE.Vector2();
+    const target = new THREE.Vector2();
+    const windowHalf = new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2);
+
     const onMouseMove = (event: MouseEvent) => {
-        // Normalize mouse position from -1 to 1
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -((event.clientY / window.innerHeight) * 2 - 1);
+        mouse.x = (event.clientX - windowHalf.x);
+        mouse.y = (event.clientY - windowHalf.y);
     }
     document.addEventListener('mousemove', onMouseMove);
 
@@ -64,17 +67,16 @@ const HeroAnimation = () => {
 
       const elapsedTime = clock.getElapsedTime();
 
+      target.x = (1 - mouse.x) * 0.0005;
+      target.y = (1 - mouse.y) * 0.0005;
+
       // Update particles
-      particles.rotation.y = elapsedTime * 0.05;
-      particles.rotation.x = elapsedTime * 0.02;
+      particles.rotation.y = elapsedTime * 0.05 + target.x;
+      particles.rotation.x = elapsedTime * 0.02 + target.y;
 
-
-      // Parallax effect
-      const targetX = mouse.x * 0.5;
-      const targetY = mouse.y * 0.5;
-
-      camera.position.x += (targetX - camera.position.x) * 0.05;
-      camera.position.y += (targetY - camera.position.y) * 0.05;
+      // Parallax effect for camera
+      camera.position.x += (mouse.x * 0.001 - camera.position.x) * 0.05;
+      camera.position.y += (-mouse.y * 0.001 - camera.position.y) * 0.05;
       camera.lookAt(scene.position);
 
       renderer.render(scene, camera);
@@ -83,6 +85,7 @@ const HeroAnimation = () => {
 
     // Handle resize
     const onResize = () => {
+      windowHalf.set(currentMount.clientWidth / 2, currentMount.clientHeight / 2);
       camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
