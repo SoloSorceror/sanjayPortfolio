@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Code, Database, Bot, Settings2 } from "lucide-react";
+import { SkillIcon } from "@/components/3d/skill-icon";
 
 const skillCategories = [
     {
         title: "Languages",
-        icon: <Code className="h-6 w-6 text-accent" />,
+        iconType: "code",
         skills: [
             { name: "C / C++", level: 90 },
             { name: "Java", level: 85 },
@@ -15,7 +15,7 @@ const skillCategories = [
     },
     {
         title: "Frontend & Backend",
-        icon: <Settings2 className="h-6 w-6 text-accent" />,
+        iconType: "settings",
         skills: [
             { name: "MERN Stack (MongoDB, Express, React, Node.js)", level: 85 },
             { name: "Next.js", level: 80 },
@@ -25,7 +25,7 @@ const skillCategories = [
     },
     {
         title: "Machine Learning",
-        icon: <Bot className="h-6 w-6 text-accent" />,
+        iconType: "bot",
         skills: [
             { name: "Scikit-learn", level: 90 },
             { name: "TensorFlow / Keras", level: 70 },
@@ -35,7 +35,7 @@ const skillCategories = [
     },
     {
         title: "Core Concepts",
-        icon: <Database className="h-6 w-6 text-accent" />,
+        iconType: "database",
         skills: [
             { name: "Data Structures & Algorithms (DSA)", level: 90 },
             { name: "Object-Oriented Programming (OOP)", level: 85 },
@@ -43,7 +43,7 @@ const skillCategories = [
             { name: "Operating Systems", level: 70 },
         ],
     },
-];
+] as const;
 
 export default function Skills() {
     return (
@@ -51,7 +51,7 @@ export default function Skills() {
             {skillCategories.map((category) => (
                 <Card key={category.title} className="bg-card/50 backdrop-blur-sm">
                     <CardHeader className="flex flex-row items-center gap-4">
-                        {category.icon}
+                        <SkillIcon icon={category.iconType} size={40} className="shrink-0" />
                         <CardTitle className="font-headline">{category.title}</CardTitle>
                     </CardHeader>
                     <CardContent>

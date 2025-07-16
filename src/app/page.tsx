@@ -7,6 +7,7 @@ import Skills from '@/components/sections/skills';
 import Testimonials from '@/components/sections/testimonials';
 import Contact from '@/components/sections/contact';
 import { Separator } from '@/components/ui/separator';
+import { ScrollAnimation } from '@/components/motion/scroll-animation';
 
 export default function Home() {
   return (
@@ -14,29 +15,29 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
-        <section id="about" className="container py-16 md:py-24">
+        <ScrollAnimation as="section" id="about" className="container py-16 md:py-24">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">
                 About Me
             </h2>
             <About />
-        </section>
-        <section id="projects" className="bg-primary/5 py-16 md:py-24">
+        </ScrollAnimation>
+        <ScrollAnimation as="section" id="projects" className="bg-primary/5 py-16 md:py-24">
           <div className="container">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">
               My Projects
             </h2>
             <Projects />
           </div>
-        </section>
-        <section id="skills" className="bg-primary/10 py-16 md:py-24">
+        </ScrollAnimation>
+        <ScrollAnimation as="section" id="skills" className="bg-primary/10 py-16 md:py-24">
            <div className="container">
               <h2 className="text-3xl font-bold text-center font-headline mb-12">
                 Skills & Expertise
               </h2>
               <Skills />
            </div>
-        </section>
-        <section id="testimonials" className="container py-16 md:py-24">
+        </ScrollAnimation>
+        <ScrollAnimation as="section" id="testimonials" className="container py-16 md:py-24">
           <h2 className="text-3xl font-bold text-center font-headline mb-4">
             What Others Say
           </h2>
@@ -44,14 +45,14 @@ export default function Home() {
             A few kind words from colleagues and collaborators.
           </p>
           <Testimonials />
-        </section>
+        </ScrollAnimation>
         <Separator />
-        <section id="contact" className="container py-16 md:py-24">
+        <ScrollAnimation as="section" id="contact" className="container py-16 md:py-24">
            <h2 className="text-3xl font-bold text-center font-headline mb-12">
             Get In Touch
           </h2>
           <Contact />
-        </section>
+        </ScrollAnimation>
       </main>
       <Footer />
     </div>
