@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils';
 import { Rocket } from 'lucide-react';
 
 interface Particle {
+  id: number;
   x: number;
   y: number;
-  id: number;
   opacity: number;
   size: number;
 }
@@ -21,8 +21,16 @@ const CustomCursor = () => {
   const [isHero, setIsHero] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   
+  const animationFrameRef = useRef<number>();
   const lastParticleTime = useRef(0);
+  const isPointerRef = useRef(false);
+  const isHeroRef = useRef(false);
 
+  useEffect(() => {
+    isPointerRef.current = isPointer;
+    isHeroRef.current = isHero;
+  }, [isPointer, isHero]);
+  
   const onMouseMove = useCallback((e: MouseEvent) => {
     setTargetPosition({ x: e.clientX, y: e.clientY });
     
@@ -57,58 +65,58 @@ const CustomCursor = () => {
     document.body.addEventListener('mouseleave', onMouseLeave);
     document.body.addEventListener('mouseenter', onMouseEnter);
 
-    let animationFrameId: number;
-
-    const animate = () => {
-      const newX = position.x + (targetPosition.x - position.x) * 0.15;
-      const newY = position.y + (targetPosition.y - position.y) * 0.15;
-      setPosition({x: newX, y: newY});
-      
-      const now = Date.now();
-      const dx = targetPosition.x - position.x;
-      const dy = targetPosition.y - position.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      // Create new particles
-      if (isHero && !isPointer && distance > 1 && now - lastParticleTime.current > 16) {
-        lastParticleTime.current = now;
-        setParticles(prev => [
-            ...prev,
-            {
-              id: now,
-              x: newX,
-              y: newY,
-              opacity: 1,
-              size: Math.random() * 2 + 1,
-            },
-        ]);
-      }
-
-      // Update and filter particles
-      setParticles(prev =>
-        prev
-          .map(p => ({ ...p, opacity: p.opacity - 0.03, size: p.size * 0.97 }))
-          .filter(p => p.opacity > 0)
-      );
-
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    animate();
-
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.body.removeEventListener('mouseleave', onMouseLeave);
       document.body.removeEventListener('mouseenter', onMouseEnter);
-      cancelAnimationFrame(animationFrameId);
     };
-  }, [onMouseMove, onMouseLeave, onMouseEnter, targetPosition, position, isHero, isPointer]);
+  }, [onMouseMove, onMouseLeave, onMouseEnter]);
+
+  useEffect(() => {
+    const animate = () => {
+        setPosition(prevPos => ({
+            x: prevPos.x + (targetPosition.x - prevPos.x) * 0.15,
+            y: prevPos.y + (targetPosition.y - prevPos.y) * 0.15
+        }));
+        
+        setParticles(prevParticles => {
+            const now = Date.now();
+            let newParticles = [...prevParticles];
+
+            const distance = Math.hypot(targetPosition.x - position.x, targetPosition.y - position.y);
+
+            if (isHeroRef.current && !isPointerRef.current && distance > 1 && now - lastParticleTime.current > 16) {
+                lastParticleTime.current = now;
+                newParticles.push({
+                    id: now,
+                    x: position.x,
+                    y: position.y,
+                    opacity: 1,
+                    size: Math.random() * 2 + 1,
+                });
+            }
+
+            return newParticles
+                .map(p => ({ ...p, opacity: p.opacity - 0.03, size: p.size * 0.97 }))
+                .filter(p => p.opacity > 0);
+        });
+        
+        animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animationFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+        }
+    };
+}, [targetPosition, position.x, position.y]);
   
   const showRocket = isHero && !isPointer;
 
   return (
     <>
-      {/* Particle Trail */}
       {particles.map(p => (
         <div
           key={p.id}
@@ -122,7 +130,6 @@ const CustomCursor = () => {
           }}
         />
       ))}
-      {/* Main Cursor */}
       <div
         className={cn(
           'fixed top-0 left-0 pointer-events-none z-[9999] transition-opacity duration-300',
