@@ -67,7 +67,7 @@ export default function Header() {
                 heroObserver.unobserve(heroRef.current);
             }
         };
-    }, 100);
+    }, 500);
 
     return () => clearTimeout(timer);
 
