@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Github } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
+import { gsap } from 'gsap';
 import { Badge } from '@/components/ui/badge';
 import { AnimatePresence, motion } from 'framer-motion';
 
-type ProjectIcon = 'code' | 'bot' | 'database' | 'settings';
+type ProjectIconType = 'code' | 'bot' | 'database' | 'settings';
 
 type Project = {
     title: string;
@@ -17,7 +18,7 @@ type Project = {
     liveUrl: string;
     repoUrl: string;
     aiHint: string;
-    icon: ProjectIcon;
+    icon: ProjectIconType;
 };
 
 const projectsData: Project[] = [
@@ -63,8 +64,8 @@ const projectsData: Project[] = [
   },
 ];
 
-const createIconGeometry = (icon: ProjectIcon): THREE.BufferGeometry => {
-    switch (icon) {
+const createIconGeometry = (iconType: ProjectIconType): THREE.BufferGeometry => {
+    switch (iconType) {
         case 'code': {
             const shape = new THREE.Shape();
             shape.moveTo(-1, 0.5);
@@ -75,11 +76,11 @@ const createIconGeometry = (icon: ProjectIcon): THREE.BufferGeometry => {
             return new THREE.ExtrudeGeometry(shape, { depth: 0.2, bevelEnabled: false }).center();
         }
         case 'settings':
-            return new THREE.TorusKnotGeometry(0.7, 0.2, 100, 16).center();
+            return new THREE.TorusKnotGeometry(0.7, 0.25, 100, 16).center();
         case 'bot':
-            return new THREE.BoxGeometry(1.2, 1.2, 1.2).center();
+            return new THREE.BoxGeometry(1.5, 1.5, 1.5).center();
         case 'database':
-            return new THREE.CylinderGeometry(0.8, 0.8, 1.2, 32).rotateX(Math.PI / 2).center();
+            return new THREE.CylinderGeometry(0.8, 0.8, 0.4, 32).rotateX(Math.PI / 2).center();
     }
     return new THREE.BoxGeometry(1, 1, 1).center();
 };
@@ -98,7 +99,7 @@ const ProjectDetails = ({ project }: { project: Project }) => {
             className="w-full h-full p-4 md:p-6"
         >
             <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg shadow-lg">
-                <Image src={project.image} alt={project.title} layout="fill" className="object-cover" data-ai-hint={project.aiHint} />
+                <Image src={project.image} alt={project.title} fill className="object-cover" data-ai-hint={project.aiHint} />
             </div>
             <h3 className="font-headline text-2xl mb-2">{project.title}</h3>
             <p className="text-muted-foreground mb-4 text-sm">{project.description}</p>
@@ -127,6 +128,7 @@ const Projects = () => {
     const mountRef = useRef<HTMLDivElement>(null);
     const [selectedProject, setSelectedProject] = useState<Project>(projectsData[0]);
     const iconsRef = useRef<THREE.Mesh[]>([]);
+    const morphRef = useRef<{ mesh: THREE.Mesh | null, influences: number[] }>({ mesh: null, influences: [] });
     const [hoveredIcon, setHoveredIcon] = useState<THREE.Object3D | null>(null);
 
     const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
@@ -156,21 +158,41 @@ const Projects = () => {
         pointLight.position.set(5, 5, 10);
         scene.add(pointLight);
 
+        // --- Morphing Geometry Setup ---
+        const geometries = projectsData.map(p => createIconGeometry(p.icon));
+        const baseGeometry = geometries[0].clone();
+        baseGeometry.morphAttributes.position = geometries.map(g => g.getAttribute('position'));
+
         const material = new THREE.MeshStandardMaterial({
             color: 0xBE77FF,
             metalness: 0.1,
             roughness: 0.4,
+            morphTargets: true,
         });
 
+        const morphMesh = new THREE.Mesh(baseGeometry, material);
+        scene.add(morphMesh);
+        morphRef.current.mesh = morphMesh;
+        morphRef.current.influences = morphMesh.morphTargetInfluences || [];
+
+        const initialProjectIndex = projectsData.findIndex(p => p.title === selectedProject.title);
+        if (initialProjectIndex !== -1 && morphRef.current.influences.length > 0) {
+            morphRef.current.influences[initialProjectIndex] = 1;
+        }
+
+
+        // --- Clickable invisible icons ---
         iconsRef.current = projectsData.map((project, i) => {
-            const geometry = createIconGeometry(project.icon);
-            const iconMesh = new THREE.Mesh(geometry, material);
+            const iconMesh = new THREE.Mesh(
+                new THREE.SphereGeometry(1.5, 16, 16),
+                new THREE.MeshBasicMaterial({ visible: false })
+            );
 
             const angle = (i / projectsData.length) * Math.PI * 2;
             const radius = 4;
             iconMesh.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
             
-            iconMesh.userData.projectData = project;
+            iconMesh.userData = { projectData: project, index: i };
             scene.add(iconMesh);
             return iconMesh;
         });
@@ -207,21 +229,17 @@ const Projects = () => {
             const delta = clock.getDelta();
 
             iconsRef.current.forEach(icon => {
-                let speed = 0.5;
-                if (icon === hoveredIcon) {
-                    speed = 2.5;
-                }
-                 if ((icon as THREE.Mesh).userData.projectData.title === selectedProject.title) {
-                    // Make selected icon larger and bring it forward slightly
-                    icon.scale.lerp(new THREE.Vector3(1.5, 1.5, 1.5), 0.1);
-                } else {
-                    icon.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
-                }
-                icon.rotation.x += delta * speed * 0.1;
-                icon.rotation.y += delta * speed * 0.2;
+                const isSelected = icon.userData.projectData.title === selectedProject.title;
+                const isHovered = icon === hoveredIcon;
+                
+                const targetScale = isSelected ? 1.2 : (isHovered ? 1.1 : 1);
+                icon.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
             });
-
-            scene.rotation.y += delta * 0.05;
+            
+            if (morphRef.current.mesh) {
+                morphRef.current.mesh.rotation.y += delta * 0.2;
+                morphRef.current.mesh.rotation.x += delta * 0.1;
+            }
 
             renderer.render(scene, camera);
         };
@@ -244,7 +262,31 @@ const Projects = () => {
             }
         };
 
-    }, [onResize, hoveredIcon, selectedProject]);
+    }, [onResize]);
+
+    useEffect(() => {
+        const influences = morphRef.current.influences;
+        if (!influences || influences.length === 0) return;
+
+        const targetIndex = projectsData.findIndex(p => p.title === selectedProject.title);
+        
+        // Animate all influences to 0
+        gsap.to(influences, {
+            duration: 0.7,
+            endArray: influences.map(() => 0),
+            ease: "power2.inOut",
+        });
+
+        // Animate the target influence to 1
+        gsap.to(influences, {
+            duration: 0.7,
+            delay: 0.1,
+            [targetIndex]: 1,
+            ease: "power2.inOut",
+        });
+
+    }, [selectedProject]);
+
 
     return (
         <section id="projects" className="relative py-16 md:py-24 z-10 min-h-screen flex flex-col justify-center">
@@ -253,7 +295,7 @@ const Projects = () => {
                 My Projects
               </h2>
               <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-                An interactive showcase of my work. Click on the 3D icons to explore the projects.
+                An interactive showcase of my work. Hover and click the icons to explore the projects.
               </p>
             </div>
             <div className="container grid md:grid-cols-2 gap-8 items-center min-h-[60vh]">

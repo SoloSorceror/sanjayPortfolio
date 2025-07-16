@@ -85,17 +85,6 @@ export default function Home() {
              </div>
           </ScrollAnimation>
         </div>
-        <section className="relative py-16 md:py-24 min-h-[400px] md:h-[50vh]">
-            <div className="container text-center">
-                 <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-4">
-                    Feeling Adventurous?
-                </h2>
-                <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-                    Take a break and clear some asteroids. Just for fun.
-                </p>
-            </div>
-            <InteractiveAsteroids />
-        </section>
       </main>
       <Footer />
     </div>
