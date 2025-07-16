@@ -22,7 +22,7 @@ const projectsData: Project[] = [
   {
     title: 'DayFlow.ai – Smart Productivity Tracker',
     description: 'A full-featured productivity platform that blends smart planning with mindful living. Helps users structure their day, stay focused, and reflect effectively.',
-    image: 'https://pixabay.com/illustrations/workflow-planning-process-8935726/',
+    image: 'https://images.unsplash.com/photo-1518976024611-28bf4b48222e?q=80&w=685&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     tags: ['Next.js', 'LangChain', 'OpenAI', 'MongoDB', 'Docker', 'GitHub Actions'],
     liveUrl: '#',
     repoUrl: 'https://github.com/SoloSorceror/DayFlow.ai',
@@ -31,7 +31,7 @@ const projectsData: Project[] = [
   {
     title: 'Spotify Recommender',
     description: 'A personalized music recommendation system using content-based filtering to suggest songs tailored to user preferences. Built to explore recommendation engines and lightweight ML logic.',
-    image: 'https://pixabay.com/illustrations/music-relax-headphone-1813100/',
+    image: 'https://images.unsplash.com/photo-1458560871784-56d23406c091?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bXVzaWN8ZW58MHx8MHx8fDA%3D',
     tags: ['Python', 'Pandas', 'scikit-learn', 'Streamlit'],
     liveUrl: '#',
     repoUrl: '#',
@@ -40,7 +40,7 @@ const projectsData: Project[] = [
   {
     title: 'Medical Diagnosis ML App',
     description: 'Predicts potential diseases based on patient biological data using logistic regression. Focused on preprocessing, feature scaling, and accuracy.',
-    image: 'https://pixabay.com/illustrations/human-skeleton-human-body-anatomy-163715/',
+    image: 'https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?q=80&w=1170&auto=format&fit=crop',
     tags: ['Python', 'scikit-learn', 'Pandas', 'Matplotlib'],
     liveUrl: '#',
     repoUrl: '#',
@@ -49,7 +49,7 @@ const projectsData: Project[] = [
    {
     title: 'Personal Portfolio Website',
     description: 'Fully responsive, animated personal website to showcase my work and skills. Designed with simplicity, accessibility, and fluid user experience in mind.',
-    image: 'https://pixabay.com/photos/milky-way-night-sky-stars-559641/',
+    image: 'https://images.unsplash.com/photo-1516249181155-bbf89a130f77?q=80&w=2071&auto=format&fit=crop',
     tags: ['Next.js', 'React', 'Tailwind CSS', 'Three.js', 'Framer Motion'],
     liveUrl: '#',
     repoUrl: '#',
