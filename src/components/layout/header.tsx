@@ -17,46 +17,46 @@ export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeLink, setActiveLink] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const isClickScrolling = useRef(false);
+  const observer = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
-
-    const handleScroll = () => {
-        if (isClickScrolling.current) return;
-
-        const sections = navLinks.map(link => document.querySelector(link.href));
-        const scrollPosition = window.scrollY;
-
-        let current = '#hero';
-        for (const section of sections) {
-            if (section) {
-                const sectionTop = (section as HTMLElement).offsetTop;
-                if (scrollPosition >= sectionTop - 100) { // Adjusted offset
-                    current = `#${section.id}`;
-                }
-            }
-        }
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
-            current = '#contact';
-        }
-
-        setActiveLink(current);
-    };
     
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial check
+    const options = {
+      root: null,
+      rootMargin: "-80px 0px -40% 0px", // Trigger when section is in the upper part of the viewport
+      threshold: 0,
+    };
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    observer.current = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                setActiveLink(`#${entry.target.id}`);
+            }
+        });
+    }, options);
+
+    const sections = navLinks.map(link => document.querySelector(link.href));
+    sections.forEach(sec => {
+        if(sec) observer.current?.observe(sec);
+    });
+    
+    const heroElement = document.querySelector('#hero');
+    if(heroElement) observer.current.observe(heroElement);
+
+    return () => {
+      sections.forEach(sec => {
+          if(sec) observer.current?.unobserve(sec);
+      });
+      if(heroElement) observer.current?.unobserve(heroElement);
+    };
+
   }, []);
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const targetElement = document.querySelector(href);
     if (targetElement) {
-        setActiveLink(href);
-        isClickScrolling.current = true;
-        
         const top = targetElement.getBoundingClientRect().top + window.scrollY - 80;
 
         window.scrollTo({
@@ -64,11 +64,8 @@ export default function Header() {
             behavior: 'smooth'
         });
 
-        // Use a timeout to reset the flag after the scroll is likely complete
-        setTimeout(() => {
-            isClickScrolling.current = false;
-        }, 1000);
-
+        // Manually set active link on click for immediate feedback
+        setActiveLink(href);
         setIsSheetOpen(false);
     }
   }
