@@ -19,6 +19,8 @@ export const OrbitingOrb: React.FC = () => {
     if (!mountRef.current) return;
     const currentMount = mountRef.current;
 
+    let animationFrameId: number;
+
     // Scene setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
@@ -80,7 +82,7 @@ export const OrbitingOrb: React.FC = () => {
     const clock = new THREE.Clock();
 
     const animate = () => {
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
       // Animate main orb
@@ -104,9 +106,10 @@ export const OrbitingOrb: React.FC = () => {
     animate();
 
     return () => {
+      cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', onMouseMove);
-      if (currentMount) {
+      if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);
       }
       orbGeometry.dispose();
