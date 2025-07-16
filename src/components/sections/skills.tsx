@@ -5,7 +5,6 @@ import { Progress } from "@/components/ui/progress";
 import { SkillIcon } from "@/components/3d/skill-icon";
 import StaggeredReveal from "../motion/staggered-reveal";
 import { useEffect, useRef } from "react";
-import SectionBackground from "../3d/section-background";
 
 const skillCategories = [
     {
@@ -22,9 +21,9 @@ const skillCategories = [
         title: "Full-Stack Development",
         iconType: "settings",
         skills: [
-            { name: "React.js, Next.js", level: 85 },
-            { name: "Node.js, Express.js", level: 80 },
-            { name: "MongoDB, Mongoose, REST APIs", level: 75 },
+            { name: "React.js, Next.js, Node.js, Express.js", level: 85 },
+            { name: "MongoDB, Mongoose, REST APIs", level: 80 },
+            { name: "Server-Side Rendering & API Integration", level: 75 },
             { name: "End-to-end App Development", level: 90 },
         ],
     },
@@ -106,7 +105,7 @@ export default function Skills() {
     return (
         <section id="skills" className="relative bg-primary/10 py-16 md:py-24" data-cursor="block">
             <div className="container relative z-10">
-                <StaggeredReveal as="h2" className="text-3xl font-bold text-center font-headline mb-12">
+                <StaggeredReveal as="h2" className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
                     Skills & Expertise
                 </StaggeredReveal>
                 <div className="grid md:grid-cols-2 gap-8">

@@ -1,11 +1,19 @@
 
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 
 export const OrbitingOrb: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
+
+  const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
+    if (!mountRef.current) return;
+    const currentMount = mountRef.current;
+    camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+  }, []);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -90,17 +98,13 @@ export const OrbitingOrb: React.FC = () => {
       renderer.render(scene, camera);
     };
 
-    const onResize = () => {
-      camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-    };
-    window.addEventListener('resize', onResize);
+    const handleResize = () => onResize(camera, renderer);
+    window.addEventListener('resize', handleResize);
 
     animate();
 
     return () => {
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', onMouseMove);
       if (currentMount) {
         currentMount.removeChild(renderer.domElement);
@@ -110,7 +114,7 @@ export const OrbitingOrb: React.FC = () => {
       particleGeometry.dispose();
       particleMaterial.dispose();
     };
-  }, []);
+  }, [onResize]);
 
   return <div ref={mountRef} className="absolute inset-0 z-0" />;
 };

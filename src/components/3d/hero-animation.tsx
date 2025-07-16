@@ -1,10 +1,18 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 
 const HeroAnimation = () => {
   const mountRef = useRef<HTMLDivElement>(null);
+
+  const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
+    if (!mountRef.current) return;
+    const currentMount = mountRef.current;
+    camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+  }, []);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -84,23 +92,21 @@ const HeroAnimation = () => {
     animate();
 
     // Handle resize
-    const onResize = () => {
-      windowHalf.set(currentMount.clientWidth / 2, currentMount.clientHeight / 2);
-      camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    const handleResize = () => {
+        windowHalf.set(currentMount.clientWidth / 2, currentMount.clientHeight / 2);
+        onResize(camera, renderer);
     };
-    window.addEventListener('resize', onResize);
+    window.addEventListener('resize', handleResize);
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', handleResize);
       document.removeEventListener('mousemove', onMouseMove);
       if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);
       }
     };
-  }, []);
+  }, [onResize]);
 
   return <div ref={mountRef} className="absolute inset-0" />;
 };

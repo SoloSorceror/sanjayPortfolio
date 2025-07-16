@@ -1,10 +1,18 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 
 export const InteractiveAsteroids = () => {
     const mountRef = useRef<HTMLDivElement>(null);
+
+    const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
+        if (!mountRef.current) return;
+        const currentMount = mountRef.current;
+        camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    }, []);
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -65,22 +73,6 @@ export const InteractiveAsteroids = () => {
         // Mouse interaction
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
-
-        const onClick = (event: MouseEvent) => {
-            const rect = renderer.domElement.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(asteroids);
-
-            if (intersects.length > 0) {
-                const intersectedObject = intersects[0].object as THREE.Mesh;
-                createExplosion(intersectedObject.position);
-                scene.remove(intersectedObject);
-                asteroids.splice(asteroids.indexOf(intersectedObject), 1);
-            }
-        };
         
         let particleSystems: THREE.Points[] = [];
 
@@ -125,6 +117,22 @@ export const InteractiveAsteroids = () => {
         }
 
 
+        const onClick = (event: MouseEvent) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(asteroids);
+
+            if (intersects.length > 0) {
+                const intersectedObject = intersects[0].object as THREE.Mesh;
+                createExplosion(intersectedObject.position);
+                scene.remove(intersectedObject);
+                asteroids.splice(asteroids.indexOf(intersectedObject), 1);
+            }
+        };
+
         // Animation loop
         const clock = new THREE.Clock();
         const animate = () => {
@@ -167,24 +175,20 @@ export const InteractiveAsteroids = () => {
         animate();
 
         // Handle resize
-        const onResize = () => {
-            camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-        };
+        const handleResize = () => onResize(camera, renderer);
         
-        window.addEventListener('resize', onResize);
+        window.addEventListener('resize', handleResize);
         currentMount.addEventListener('click', onClick);
 
         // Cleanup
         return () => {
-            window.removeEventListener('resize', onResize);
+            window.removeEventListener('resize', handleResize);
              if (currentMount) {
                 currentMount.removeEventListener('click', onClick);
                 currentMount.removeChild(renderer.domElement);
             }
         };
-    }, []);
+    }, [onResize]);
 
     return <div ref={mountRef} className="absolute inset-0 z-0" />;
 };

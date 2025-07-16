@@ -55,7 +55,7 @@ export default function About() {
   return (
     <div className="container py-16 md:py-24 min-h-screen flex flex-col justify-center">
        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
-            <div className="relative h-64 md:h-full w-full">
+            <div className="relative h-64 md:h-[500px] w-full">
                 <OrbitingOrb />
             </div>
             <StaggeredReveal>
@@ -69,7 +69,7 @@ export default function About() {
                         <Card className="bg-transparent border-none shadow-none">
                             <CardContent className="p-1">
                                 <StaggeredReveal>
-                                    <h2 className="text-3xl font-bold font-headline mb-4">{aboutData.bio.title}</h2>
+                                    <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">{aboutData.bio.title}</h2>
                                     {aboutData.bio.paragraphs.map((p, i) => (
                                         <p key={i} className="text-muted-foreground leading-relaxed mb-4">{p}</p>
                                     ))}

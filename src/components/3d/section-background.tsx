@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 
 interface SectionBackgroundProps {
@@ -9,6 +9,14 @@ interface SectionBackgroundProps {
 
 const SectionBackground = ({ effect }: SectionBackgroundProps) => {
   const mountRef = useRef<HTMLDivElement>(null);
+
+  const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
+    if (!mountRef.current) return;
+    const currentMount = mountRef.current;
+    camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+  }, []);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -27,9 +35,10 @@ const SectionBackground = ({ effect }: SectionBackgroundProps) => {
     const mouse = new THREE.Vector2();
 
     const onMouseMove = (event: MouseEvent) => {
-      const rect = currentMount.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      // Normalize mouse position to [-1, 1] range relative to the entire document
+      // This helps with consistency when the canvas doesn't fill the screen
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     };
     window.addEventListener('mousemove', onMouseMove);
 
@@ -114,17 +123,13 @@ const SectionBackground = ({ effect }: SectionBackgroundProps) => {
       renderer.render(scene, camera);
     };
 
-    const onResize = () => {
-      camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-    };
-    window.addEventListener('resize', onResize);
+    const handleResize = () => onResize(camera, renderer);
+    window.addEventListener('resize', handleResize);
 
     animate();
 
     return () => {
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', onMouseMove);
       if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);
@@ -140,7 +145,7 @@ const SectionBackground = ({ effect }: SectionBackgroundProps) => {
         }
       });
     };
-  }, [effect]);
+  }, [effect, onResize]);
 
   return <div ref={mountRef} className="absolute inset-0 z-0 opacity-20" />;
 };

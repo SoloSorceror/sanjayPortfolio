@@ -8,6 +8,7 @@ import Contact from '@/components/sections/contact';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
 import SectionBackground from '@/components/3d/section-background';
 import { InteractiveAsteroids } from '@/components/3d/interactive-asteroids';
+import Testimonials from '@/components/sections/testimonials';
 
 export default function Home() {
   return (
@@ -24,7 +25,7 @@ export default function Home() {
 
           <ScrollAnimation as="section" id="projects" className="relative py-16 md:py-24 z-10">
             <div className="container">
-              <h2 className="text-3xl font-bold text-center font-headline mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
                 My Projects
               </h2>
               <Projects />
@@ -35,18 +36,27 @@ export default function Home() {
             <Skills />
           </ScrollAnimation>
           
+           <ScrollAnimation as="section" id="testimonials" className="relative py-16 md:py-24 z-10">
+            <div className="container">
+              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
+                What Others Say
+              </h2>
+              <Testimonials />
+            </div>
+          </ScrollAnimation>
+
           <ScrollAnimation as="section" id="contact" className="relative py-16 md:py-24 z-10">
              <div className="container">
-              <h2 className="text-3xl font-bold text-center font-headline mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
                   Get In Touch
               </h2>
               <Contact />
              </div>
           </ScrollAnimation>
         </div>
-        <section className="relative py-16 md:py-24 h-[50vh] min-h-[400px]">
+        <section className="relative py-16 md:py-24 min-h-[400px] md:h-[50vh]">
             <div className="container text-center">
-                 <h2 className="text-3xl font-bold text-center font-headline mb-4">
+                 <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-4">
                     Feeling Adventurous?
                 </h2>
                 <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">

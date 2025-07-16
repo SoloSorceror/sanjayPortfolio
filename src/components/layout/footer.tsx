@@ -12,7 +12,7 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer className="bg-primary/5">
-      <div className="container py-8 flex flex-col md:flex-row items-center justify-between text-center md:text-left">
+      <div className="container py-8 flex flex-col md:flex-row items-center justify-between text-center md:text-left gap-4">
         <div className="mb-4 md:mb-0">
             <p className="text-sm text-muted-foreground">
                 &copy; {new Date().getFullYear()} Sanjay Chetry. All rights reserved.
