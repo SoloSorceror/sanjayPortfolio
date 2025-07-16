@@ -12,14 +12,14 @@ const projects = [
     title: 'DayFlow.ai – Smart Productivity Tracker',
     description: 'A full-featured productivity platform that blends smart planning with mindful living. Helps users structure their day, stay focused, and reflect effectively.',
     image: 'https://placehold.co/600x400.png',
-    tags: ['Next.js', 'LangChain', 'OpenAI', 'MongoDB', 'Docker'],
+    tags: ['Next.js', 'LangChain', 'OpenAI', 'MongoDB', 'Docker', 'GitHub Actions'],
     liveUrl: '#',
     repoUrl: 'https://github.com/SoloSorceror/DayFlow.ai',
     aiHint: 'productivity dashboard AI',
   },
   {
     title: 'Spotify Recommender',
-    description: 'A personalized music recommendation system using content-based filtering to suggest songs tailored to user preferences.',
+    description: 'A personalized music recommendation system using content-based filtering to suggest songs tailored to user preferences. Built to explore recommendation engines and lightweight ML logic.',
     image: 'https://placehold.co/600x400.png',
     tags: ['Python', 'Pandas', 'scikit-learn', 'Streamlit'],
     liveUrl: '#',
@@ -75,22 +75,22 @@ const ProjectCard = ({ project }: { project: typeof projects[0] }) => {
     }, []);
   
     return (
-        <Card ref={cardRef} className="flex flex-col overflow-hidden transition-all duration-200 ease-out will-change-transform bg-card/80 backdrop-blur-sm border-transparent hover:shadow-2xl hover:shadow-accent/20">
-             <CardHeader>
+        <Card ref={cardRef} className="flex flex-col h-full overflow-hidden transition-all duration-200 ease-out will-change-transform bg-card/80 backdrop-blur-sm border-transparent hover:shadow-2xl hover:shadow-accent/20">
+             <CardHeader className="flex-shrink-0">
                <div className="relative h-60 w-full mb-4 overflow-hidden rounded-lg">
                   <Image src={project.image} alt={project.title} fill className="object-cover rounded-t-lg" data-ai-hint={project.aiHint} />
                </div>
                <CardTitle className="font-headline">{project.title}</CardTitle>
                <CardDescription>{project.description}</CardDescription>
              </CardHeader>
-             <CardContent className="flex-grow">
-               <div className="flex flex-wrap gap-2">
+             <CardContent className="flex-grow flex flex-col justify-end">
+               <div className="flex flex-wrap gap-2 pt-4">
                  {project.tags.map((tag) => (
                    <Badge key={tag} variant="secondary">{tag}</Badge>
                  ))}
                </div>
              </CardContent>
-             <CardFooter>
+             <CardFooter className="flex-shrink-0 pt-6">
                <Button asChild variant="outline">
                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                    <ExternalLink className="mr-2 h-4 w-4" /> Live Demo
