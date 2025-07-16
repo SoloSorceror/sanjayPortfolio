@@ -74,6 +74,15 @@ export default function Home() {
              </div>
           </ScrollAnimation>
 
+          <ScrollAnimation as="section" id="contact" className="relative py-16 md:py-24 z-10">
+             <div className="container">
+              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
+                  Get In Touch
+              </h2>
+              <Contact />
+             </div>
+          </ScrollAnimation>
+
           <section id="asteroid-game" className="relative py-16 md:py-24 z-10">
             <div className="container text-center">
               <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">
@@ -87,15 +96,6 @@ export default function Home() {
               </div>
             </div>
           </section>
-
-          <ScrollAnimation as="section" id="contact" className="relative py-16 md:py-24 z-10">
-             <div className="container">
-              <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
-                  Get In Touch
-              </h2>
-              <Contact />
-             </div>
-          </ScrollAnimation>
         </div>
       </main>
       <Footer />
