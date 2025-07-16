@@ -5,7 +5,7 @@ import HeroAnimation from '@/components/3d/hero-animation';
 
 export default function Hero() {
   return (
-    <section id="hero" data-cursor="shuttle" className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+    <section id="hero" className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
        <div className="absolute inset-0 z-0">
         <HeroAnimation />
        </div>

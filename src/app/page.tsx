@@ -21,7 +21,7 @@ export default function Home() {
             </h2>
             <About />
         </ScrollAnimation>
-        <ScrollAnimation as="section" id="projects" className="bg-primary/5 py-16 md:py-24" data-cursor="block">
+        <ScrollAnimation as="section" id="projects" className="bg-primary/5 py-16 md:py-24">
           <div className="container">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">
               My Projects
@@ -32,7 +32,7 @@ export default function Home() {
         <ScrollAnimation as="div">
           <Skills />
         </ScrollAnimation>
-        <ScrollAnimation as="section" id="testimonials" className="container py-16 md:py-24" data-cursor="block">
+        <ScrollAnimation as="section" id="testimonials" className="container py-16 md:py-24">
           <h2 className="text-3xl font-bold text-center font-headline mb-4">
             What Others Say
           </h2>
@@ -42,7 +42,7 @@ export default function Home() {
           <Testimonials />
         </ScrollAnimation>
         <Separator />
-        <ScrollAnimation as="section" id="contact" className="container py-16 md:py-24" data-cursor="block">
+        <ScrollAnimation as="section" id="contact" className="container py-16 md:py-24">
            <h2 className="text-3xl font-bold text-center font-headline mb-12">
             Get In Touch
           </h2>

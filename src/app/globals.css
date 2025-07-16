@@ -99,4 +99,17 @@ a, button, [role="button"], input, textarea {
       transform: translateY(0);
     }
   }
+
+  .animate-nav-item-fall {
+    animation: nav-item-fall 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  @keyframes nav-item-fall {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
