@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ExternalLink } from 'lucide-react';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 
 const projects = [
   {
@@ -45,35 +45,44 @@ const projects = [
 
 export default function Projects() {
   return (
-    <div className="grid md:grid-cols-2 gap-8">
-      {projects.map((project) => (
-        <Card key={project.title} className="flex flex-col overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/10">
-          <CardHeader>
-            <div className="relative h-60 w-full mb-4">
-               <Image src={project.image} alt={project.title} fill className="object-cover rounded-t-lg" data-ai-hint={project.aiHint} />
-            </div>
-            <CardTitle className="font-headline">{project.title}</CardTitle>
-            <CardDescription>{project.description}</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-grow">
-            <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
-                <Badge key={tag} variant="secondary">{tag}</Badge>
-              ))}
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button asChild variant="outline">
-              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="mr-2 h-4 w-4" /> Live Demo
-              </a>
-            </Button>
-            <Button asChild variant="link" className="ml-auto text-accent">
-                <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">View Code</a>
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
-    </div>
+    <>
+      <div className="grid md:grid-cols-2 gap-8">
+        {projects.map((project) => (
+          <Card key={project.title} className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/20 border-transparent hover:border-accent/30 bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+              <div className="relative h-60 w-full mb-4 overflow-hidden rounded-lg">
+                 <Image src={project.image} alt={project.title} fill className="object-cover rounded-t-lg transition-transform duration-500 group-hover:scale-105" data-ai-hint={project.aiHint} />
+              </div>
+              <CardTitle className="font-headline">{project.title}</CardTitle>
+              <CardDescription>{project.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow">
+              <div className="flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary">{tag}</Badge>
+                ))}
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button asChild variant="outline">
+                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="mr-2 h-4 w-4" /> Live Demo
+                </a>
+              </Button>
+              <Button asChild variant="link" className="ml-auto text-accent">
+                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">View Code</a>
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+      <div className="mt-16 text-center">
+        <Button asChild size="lg">
+          <a href="#" target="_blank" rel="noopener noreferrer">
+            View More on GitHub <ArrowRight className="ml-2 h-4 w-4" />
+          </a>
+        </Button>
+      </div>
+    </>
   );
 }

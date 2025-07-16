@@ -30,38 +30,51 @@ const HeroAnimation = () => {
     currentMount.appendChild(renderer.domElement);
 
     // Particles
-    const particlesCount = 5000;
+    const particlesCount = 7000;
     const positions = new Float32Array(particlesCount * 3);
     for (let i = 0; i < particlesCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 10;
+      positions[i] = (Math.random() - 0.5) * 15;
     }
     const particlesGeometry = new THREE.BufferGeometry();
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.005,
+      size: 0.008,
       color: '#BE77FF',
+      transparent: true,
+      blending: THREE.AdditiveBlending,
     });
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
 
     // Mouse tracking
-    let mouseX = 0;
-    let mouseY = 0;
+    const mouse = new THREE.Vector2();
     const onMouseMove = (event: MouseEvent) => {
-        mouseX = event.clientX - window.innerWidth / 2;
-        mouseY = event.clientY - window.innerHeight / 2;
+        // Normalize mouse position from -1 to 1
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -((event.clientY / window.innerHeight) * 2 - 1);
     }
     document.addEventListener('mousemove', onMouseMove);
+
+    // Clock for animation
+    const clock = new THREE.Clock();
 
     // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
-      particles.rotation.x += 0.0001;
-      particles.rotation.y += 0.0002;
+
+      const elapsedTime = clock.getElapsedTime();
+
+      // Update particles
+      particles.rotation.y = elapsedTime * 0.05;
+      particles.rotation.x = elapsedTime * 0.02;
+
 
       // Parallax effect
-      camera.position.x += (mouseX * 0.00001 - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY * 0.00001 - camera.position.y) * 0.05;
+      const targetX = mouse.x * 0.5;
+      const targetY = mouse.y * 0.5;
+
+      camera.position.x += (targetX - camera.position.x) * 0.05;
+      camera.position.y += (targetY - camera.position.y) * 0.05;
       camera.lookAt(scene.position);
 
       renderer.render(scene, camera);
