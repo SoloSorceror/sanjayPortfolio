@@ -16,34 +16,48 @@ const navLinks = [
 export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeLink, setActiveLink] = useState('');
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
 
     const handleScroll = () => {
-      const sections = navLinks.map(link => document.querySelector(link.href));
       let current = '';
-      for (const section of sections) {
+      for (const link of navLinks) {
+        const section = document.querySelector(link.href);
         if (section) {
           const sectionTop = (section as HTMLElement).offsetTop;
           if (window.scrollY >= sectionTop - 150) {
-            current = section.id;
+            current = link.href;
           }
         }
       }
-      setActiveLink(`#${current}`);
+      setActiveLink(current);
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Set initial active link
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetElement = document.querySelector(href);
+    if (targetElement) {
+        window.scrollTo({
+            top: targetElement.getBoundingClientRect().top + window.scrollY - 80, // Offset for header height
+            behavior: 'smooth'
+        });
+        setActiveLink(href);
+        setIsSheetOpen(false); // Close mobile sheet on click
+    }
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <a href="#" className="mr-6 flex items-center space-x-2">
+        <a href="#" onClick={(e) => handleLinkClick(e, '#hero')} className="mr-6 flex items-center space-x-2">
           <CodeXml className="h-6 w-6 text-accent" />
           <span className="font-bold font-headline">SanjayChetry.IO</span>
         </a>
@@ -53,8 +67,9 @@ export default function Header() {
               <a
                 key={link.href}
                 href={link.href}
+                onClick={(e) => handleLinkClick(e, link.href)}
                 className={cn(
-                  "px-4 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300 rounded-full relative",
+                  "px-4 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300 rounded-full",
                   activeLink === link.href && "bg-background text-foreground shadow-sm",
                   isMounted ? 'animate-nav-item-fall' : 'opacity-0'
                 )}
@@ -65,7 +80,7 @@ export default function Header() {
             ))}
           </nav>
           <div className="md:hidden">
-            <Sheet>
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Menu className="h-6 w-6" />
@@ -75,7 +90,7 @@ export default function Header() {
               <SheetContent side="right">
                 <nav className="grid gap-6 text-lg font-medium mt-8">
                   {navLinks.map((link) => (
-                    <a key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground">
+                    <a key={link.href} href={link.href} onClick={(e) => handleLinkClick(e, link.href)} className="text-muted-foreground hover:text-foreground">
                       {link.label}
                     </a>
                   ))}
