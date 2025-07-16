@@ -7,6 +7,8 @@ import * as THREE from 'three';
 import { Badge } from '@/components/ui/badge';
 import { AnimatePresence, motion } from 'framer-motion';
 
+type ProjectIcon = 'code' | 'bot' | 'database' | 'settings';
+
 type Project = {
     title: string;
     description: string;
@@ -15,6 +17,7 @@ type Project = {
     liveUrl: string;
     repoUrl: string;
     aiHint: string;
+    icon: ProjectIcon;
 };
 
 const projectsData: Project[] = [
@@ -26,6 +29,7 @@ const projectsData: Project[] = [
     liveUrl: '#',
     repoUrl: 'https://github.com/SoloSorceror/DayFlow.ai',
     aiHint: 'productivity dashboard AI',
+    icon: 'bot',
   },
   {
     title: 'Spotify Recommender',
@@ -35,6 +39,7 @@ const projectsData: Project[] = [
     liveUrl: '#',
     repoUrl: '#',
     aiHint: 'music streaming interface',
+    icon: 'settings',
   },
   {
     title: 'Medical Diagnosis ML App',
@@ -44,6 +49,7 @@ const projectsData: Project[] = [
     liveUrl: '#',
     repoUrl: '#',
     aiHint: 'medical data chart',
+    icon: 'database',
   },
    {
     title: 'Personal Portfolio Website',
@@ -53,8 +59,31 @@ const projectsData: Project[] = [
     liveUrl: '#',
     repoUrl: '#',
     aiHint: 'abstract code animation',
+    icon: 'code',
   },
 ];
+
+const createIconGeometry = (icon: ProjectIcon): THREE.BufferGeometry => {
+    switch (icon) {
+        case 'code': {
+            const shape = new THREE.Shape();
+            shape.moveTo(-1, 0.5);
+            shape.lineTo(-0.5, 1);
+            shape.lineTo(-1.5, 0);
+            shape.lineTo(-0.5, -1);
+            shape.lineTo(-1, -0.5);
+            return new THREE.ExtrudeGeometry(shape, { depth: 0.2, bevelEnabled: false }).center();
+        }
+        case 'settings':
+            return new THREE.TorusKnotGeometry(0.7, 0.2, 100, 16).center();
+        case 'bot':
+            return new THREE.BoxGeometry(1.2, 1.2, 1.2).center();
+        case 'database':
+            return new THREE.CylinderGeometry(0.8, 0.8, 1.2, 32).rotateX(Math.PI / 2).center();
+    }
+    return new THREE.BoxGeometry(1, 1, 1).center();
+};
+
 
 const ProjectDetails = ({ project }: { project: Project }) => {
     if (!project) return null;
@@ -68,23 +97,23 @@ const ProjectDetails = ({ project }: { project: Project }) => {
             transition={{ duration: 0.5 }}
             className="w-full h-full p-4 md:p-6"
         >
-            <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
+            <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg shadow-lg">
                 <Image src={project.image} alt={project.title} layout="fill" className="object-cover" data-ai-hint={project.aiHint} />
             </div>
             <h3 className="font-headline text-2xl mb-2">{project.title}</h3>
-            <p className="text-muted-foreground mb-4">{project.description}</p>
+            <p className="text-muted-foreground mb-4 text-sm">{project.description}</p>
             <div className="flex flex-wrap gap-2 py-4">
                 {project.tags.map((tag) => (
                     <Badge key={tag} variant="secondary">{tag}</Badge>
                 ))}
             </div>
-            <div className="flex justify-end gap-4 mt-4">
-                <Button asChild variant="outline">
+            <div className="flex justify-end gap-2 mt-4">
+                <Button asChild variant="outline" size="sm">
                     <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="mr-2 h-4 w-4" /> Live
                     </a>
                 </Button>
-                <Button asChild variant="ghost" className="text-accent">
+                <Button asChild variant="ghost" size="sm">
                     <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
                         <Github className="mr-2 h-4 w-4"/> Source
                     </a>
@@ -97,8 +126,8 @@ const ProjectDetails = ({ project }: { project: Project }) => {
 const Projects = () => {
     const mountRef = useRef<HTMLDivElement>(null);
     const [selectedProject, setSelectedProject] = useState<Project>(projectsData[0]);
-    const planetsRef = useRef<THREE.Mesh[]>([]);
-    const targetRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 0, 15));
+    const iconsRef = useRef<THREE.Mesh[]>([]);
+    const [hoveredIcon, setHoveredIcon] = useState<THREE.Object3D | null>(null);
 
     const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
         if (!mountRef.current) return;
@@ -108,93 +137,65 @@ const Projects = () => {
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     }, []);
 
-    const createPlanetTexture = (color: THREE.Color) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 256;
-        canvas.height = 256;
-        const context = canvas.getContext('2d');
-        if (!context) return null;
-
-        const lighterColor = color.clone().multiplyScalar(1.5);
-        const darkerColor = color.clone().multiplyScalar(0.5);
-
-        for (let i = 0; i < 10000; i++) {
-            const x = Math.random() * 256;
-            const y = Math.random() * 256;
-            const radius = Math.random() * 1.5;
-            const grad = context.createRadialGradient(x, y, 0, x, y, radius);
-            grad.addColorStop(0, `rgba(${lighterColor.r*255}, ${lighterColor.g*255}, ${lighterColor.b*255}, ${Math.random() * 0.5})`);
-            grad.addColorStop(1, `rgba(${darkerColor.r*255}, ${darkerColor.g*255}, ${darkerColor.b*255}, 0)`);
-            context.fillStyle = grad;
-            context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
-        }
-        return new THREE.CanvasTexture(canvas);
-    }
-
     useEffect(() => {
         if (!mountRef.current) return;
         const currentMount = mountRef.current;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
-        camera.position.z = 15;
+        camera.position.z = 10;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
         currentMount.appendChild(renderer.domElement);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0xBE77FF, 2, 100);
-        pointLight.position.set(10, 10, 10);
+        const pointLight = new THREE.PointLight(0xBE77FF, 3, 100);
+        pointLight.position.set(5, 5, 10);
         scene.add(pointLight);
 
-        const planetGeometry = new THREE.SphereGeometry(1, 32, 32);
-        
-        planetsRef.current = projectsData.map((project, i) => {
-            const color = new THREE.Color(`hsl(${271 + i * 25}, 100%, 74%)`);
-            const texture = createPlanetTexture(color);
-            const material = new THREE.MeshStandardMaterial({ 
-                map: texture,
-                color: color,
-                roughness: 0.7,
-                metalness: 0.1
-            });
-            const planet = new THREE.Mesh(planetGeometry, material);
-            
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xBE77FF,
+            metalness: 0.1,
+            roughness: 0.4,
+        });
+
+        iconsRef.current = projectsData.map((project, i) => {
+            const geometry = createIconGeometry(project.icon);
+            const iconMesh = new THREE.Mesh(geometry, material);
+
             const angle = (i / projectsData.length) * Math.PI * 2;
-            const radius = 6;
-            planet.position.set(Math.cos(angle) * radius, (Math.random() - 0.5) * 4, Math.sin(angle) * radius);
+            const radius = 4;
+            iconMesh.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
             
-            const scale = Math.random() * 0.8 + 0.8;
-            planet.scale.set(scale, scale, scale);
-            
-            (planet.userData as any).projectData = project;
-            scene.add(planet);
-            return planet;
+            iconMesh.userData.projectData = project;
+            scene.add(iconMesh);
+            return iconMesh;
         });
 
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
 
-        const onClick = (event: MouseEvent) => {
+        const onMouseMove = (event: MouseEvent) => {
             if (!currentMount) return;
             const rect = currentMount.getBoundingClientRect();
             mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-            
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planetsRef.current);
 
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(iconsRef.current);
             if (intersects.length > 0) {
-                const intersectedObject = intersects[0].object as THREE.Mesh;
-                if (intersectedObject.userData.projectData) {
-                    setSelectedProject(intersectedObject.userData.projectData);
-                    const targetPosition = intersectedObject.position.clone();
-                    targetPosition.z += 5; // Zoom in a bit
-                    targetRef.current.copy(targetPosition);
-                }
+                setHoveredIcon(intersects[0].object);
+            } else {
+                setHoveredIcon(null);
+            }
+        };
+
+        const onClick = () => {
+            if (hoveredIcon) {
+                setSelectedProject((hoveredIcon as THREE.Mesh).userData.projectData);
             }
         };
 
@@ -205,25 +206,37 @@ const Projects = () => {
             animationFrameId = requestAnimationFrame(animate);
             const delta = clock.getDelta();
 
-            planetsRef.current.forEach(planet => {
-                planet.rotation.y += 0.001;
+            iconsRef.current.forEach(icon => {
+                let speed = 0.5;
+                if (icon === hoveredIcon) {
+                    speed = 2.5;
+                }
+                 if ((icon as THREE.Mesh).userData.projectData.title === selectedProject.title) {
+                    // Make selected icon larger and bring it forward slightly
+                    icon.scale.lerp(new THREE.Vector3(1.5, 1.5, 1.5), 0.1);
+                } else {
+                    icon.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+                }
+                icon.rotation.x += delta * speed * 0.1;
+                icon.rotation.y += delta * speed * 0.2;
             });
-            
-            camera.position.lerp(targetRef.current, 0.05);
-            camera.lookAt(0, 0, 0);
-            
+
+            scene.rotation.y += delta * 0.05;
+
             renderer.render(scene, camera);
         };
         animate();
 
         const handleResize = () => onResize(camera, renderer);
         window.addEventListener('resize', handleResize);
+        currentMount.addEventListener('mousemove', onMouseMove);
         currentMount.addEventListener('click', onClick);
 
         return () => {
             cancelAnimationFrame(animationFrameId);
             window.removeEventListener('resize', handleResize);
             if (currentMount) {
+                currentMount.removeEventListener('mousemove', onMouseMove);
                 currentMount.removeEventListener('click', onClick);
                 if (renderer.domElement.parentElement === currentMount) {
                   currentMount.removeChild(renderer.domElement);
@@ -231,7 +244,7 @@ const Projects = () => {
             }
         };
 
-    }, [onResize]);
+    }, [onResize, hoveredIcon, selectedProject]);
 
     return (
         <section id="projects" className="relative py-16 md:py-24 z-10 min-h-screen flex flex-col justify-center">
@@ -240,16 +253,23 @@ const Projects = () => {
                 My Projects
               </h2>
               <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Explore my work by navigating my project solar system. Click on a planet to view its details.
+                An interactive showcase of my work. Click on the 3D icons to explore the projects.
               </p>
             </div>
             <div className="container grid md:grid-cols-2 gap-8 items-center min-h-[60vh]">
                 <div ref={mountRef} className="relative w-full h-[40vh] md:h-[60vh] cursor-pointer" />
-                <div className="relative w-full h-full min-h-[40vh] md:min-h-[60vh] bg-primary/5 rounded-lg flex items-center justify-center">
+                <div className="relative w-full h-full min-h-[40vh] md:min-h-[60vh] bg-primary/5 rounded-lg flex items-center justify-center backdrop-blur-sm border border-border/20">
                     <AnimatePresence mode="wait">
                        {selectedProject && <ProjectDetails project={selectedProject} />}
                     </AnimatePresence>
                 </div>
+            </div>
+            <div className="container text-center mt-12">
+                <Button asChild>
+                    <a href="https://github.com/SoloSorceror" target="_blank" rel="noopener noreferrer">
+                        <Github className="mr-2 h-4 w-4"/> View All Projects on GitHub
+                    </a>
+                </Button>
             </div>
         </section>
     );

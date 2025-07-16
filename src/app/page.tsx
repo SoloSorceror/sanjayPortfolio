@@ -61,9 +61,13 @@ export default function Home() {
           
           <Projects />
 
-          <ScrollAnimation as="div" id="skills" className="relative z-10">
-            <Skills />
-          </ScrollAnimation>
+          <div className="relative">
+            <SectionBackground effect="grid" />
+            <ScrollAnimation as="div" id="skills" className="relative z-10">
+              <Skills />
+            </ScrollAnimation>
+          </div>
+
           <ScrollAnimation as="section" id="testimonials" className="relative py-16 md:py-24 z-10">
              <div className="container">
                 <h2 className="text-3xl md:text-4xl font-bold text-center font-headline mb-12">
