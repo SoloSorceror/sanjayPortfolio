@@ -3,6 +3,7 @@ import { CodeXml, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '#about', label: 'About' },
@@ -14,9 +15,29 @@ const navLinks = [
 
 export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
+  const [activeLink, setActiveLink] = useState('');
 
   useEffect(() => {
     setIsMounted(true);
+
+    const handleScroll = () => {
+      const sections = navLinks.map(link => document.querySelector(link.href));
+      let current = '';
+      for (const section of sections) {
+        if (section) {
+          const sectionTop = (section as HTMLElement).offsetTop;
+          if (window.scrollY >= sectionTop - 150) {
+            current = section.id;
+          }
+        }
+      }
+      setActiveLink(`#${current}`);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Set initial active link
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -27,22 +48,20 @@ export default function Header() {
           <span className="font-bold font-headline">SanjayChetry.IO</span>
         </a>
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <nav className="hidden md:flex space-x-1">
+          <nav className="hidden md:flex space-x-1 bg-muted/50 p-1 rounded-full">
             {navLinks.map((link, index) => (
-              <Button
+              <a
                 key={link.href}
-                asChild
-                variant="link"
-                className={`relative group text-foreground/80 hover:text-accent transition-colors duration-300 ${
-                  isMounted ? 'animate-nav-item-fall' : ''
-                }`}
+                href={link.href}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300 rounded-full relative",
+                  activeLink === link.href && "bg-background text-foreground shadow-sm",
+                  isMounted ? 'animate-nav-item-fall' : 'opacity-0'
+                )}
                 style={{ animationDelay: `${index * 100 + 300}ms` }}
               >
-                <a href={link.href}>
-                  {link.label}
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-center duration-300" />
-                </a>
-              </Button>
+                {link.label}
+              </a>
             ))}
           </nav>
           <div className="md:hidden">
