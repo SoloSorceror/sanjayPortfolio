@@ -78,10 +78,10 @@ export default function About() {
                         </Card>
                     </TabsContent>
                     <TabsContent value="experience">
-                         <StaggeredReveal>
-                            <div className="space-y-6 min-h-[420px]">
+                         <div className="space-y-6 min-h-[420px]">
+                            <StaggeredReveal>
                                 {aboutData.experience.map((item, index) => (
-                                    <div key={index} className="relative pl-6">
+                                    <div key={index} className="relative pl-6 mb-6">
                                         <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-accent" />
                                         <p className="font-semibold">{item.role}</p>
                                         <p className="text-sm text-accent">{item.company}</p>
@@ -89,14 +89,14 @@ export default function About() {
                                         <p className="text-sm text-muted-foreground">{item.description}</p>
                                     </div>
                                 ))}
-                            </div>
-                        </StaggeredReveal>
+                            </StaggeredReveal>
+                        </div>
                     </TabsContent>
                     <TabsContent value="education">
-                        <StaggeredReveal>
-                            <div className="space-y-6 min-h-[420px]">
+                        <div className="space-y-6 min-h-[420px]">
+                            <StaggeredReveal>
                                 {aboutData.education.map((item, index) => (
-                                    <div key={index} className="relative pl-6">
+                                    <div key={index} className="relative pl-6 mb-6">
                                         <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-accent" />
                                         <p className="font-semibold">{item.degree}</p>
                                         <p className="text-sm text-accent">{item.institution}</p>
@@ -104,13 +104,13 @@ export default function About() {
                                         <p className="text-sm text-muted-foreground">{item.description}</p>
                                     </div>
                                 ))}
-                                 <Button asChild className="mt-6" variant="outline">
-                                    <a href="https://www.linkedin.com/in/sanjaychetry/details/certifications/" target="_blank" rel="noopener noreferrer">
-                                        <ExternalLink className="mr-2 h-4 w-4"/> View Certificates
-                                    </a>
-                                </Button>
-                            </div>
-                        </StaggeredReveal>
+                            </StaggeredReveal>
+                             <Button asChild className="mt-6" variant="outline">
+                                <a href="https://www.linkedin.com/in/sanjaychetry/details/certifications/" target="_blank" rel="noopener noreferrer">
+                                    <ExternalLink className="mr-2 h-4 w-4"/> View Certificates
+                                </a>
+                            </Button>
+                        </div>
                     </TabsContent>
                 </Tabs>
             </StaggeredReveal>
