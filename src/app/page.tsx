@@ -8,6 +8,7 @@ import Testimonials from '@/components/sections/testimonials';
 import Contact from '@/components/sections/contact';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
 import SectionBackground from '@/components/3d/section-background';
+import { InteractiveAsteroids } from '@/components/3d/interactive-asteroids';
 
 export default function Home() {
   return (
@@ -60,6 +61,17 @@ export default function Home() {
              </div>
           </ScrollAnimation>
         </div>
+        <section className="relative py-16 md:py-24 h-[50vh] min-h-[400px]">
+            <div className="container text-center">
+                 <h2 className="text-3xl font-bold text-center font-headline mb-4">
+                    Feeling Adventurous?
+                </h2>
+                <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+                    Take a break and clear some asteroids. Just for fun.
+                </p>
+            </div>
+            <InteractiveAsteroids />
+        </section>
       </main>
       <Footer />
     </div>
