@@ -8,8 +8,6 @@ import { gsap } from 'gsap';
 import { Badge } from '@/components/ui/badge';
 import { AnimatePresence, motion } from 'framer-motion';
 
-type ProjectIconType = 'code' | 'bot' | 'database' | 'settings';
-
 type Project = {
     title: string;
     description: string;
@@ -18,7 +16,6 @@ type Project = {
     liveUrl: string;
     repoUrl: string;
     aiHint: string;
-    icon: ProjectIconType;
 };
 
 const projectsData: Project[] = [
@@ -30,7 +27,6 @@ const projectsData: Project[] = [
     liveUrl: '#',
     repoUrl: 'https://github.com/SoloSorceror/DayFlow.ai',
     aiHint: 'productivity dashboard AI',
-    icon: 'bot',
   },
   {
     title: 'Spotify Recommender',
@@ -40,7 +36,6 @@ const projectsData: Project[] = [
     liveUrl: '#',
     repoUrl: '#',
     aiHint: 'music streaming interface',
-    icon: 'settings',
   },
   {
     title: 'Medical Diagnosis ML App',
@@ -50,7 +45,6 @@ const projectsData: Project[] = [
     liveUrl: '#',
     repoUrl: '#',
     aiHint: 'medical data chart',
-    icon: 'database',
   },
    {
     title: 'Personal Portfolio Website',
@@ -60,30 +54,36 @@ const projectsData: Project[] = [
     liveUrl: '#',
     repoUrl: '#',
     aiHint: 'abstract code animation',
-    icon: 'code',
   },
 ];
 
-const createIconGeometry = (iconType: ProjectIconType): THREE.BufferGeometry => {
-    switch (iconType) {
-        case 'code': {
-            const shape = new THREE.Shape();
-            shape.moveTo(-1, 0.5);
-            shape.lineTo(-0.5, 1);
-            shape.lineTo(-1.5, 0);
-            shape.lineTo(-0.5, -1);
-            shape.lineTo(-1, -0.5);
-            return new THREE.ExtrudeGeometry(shape, { depth: 0.2, bevelEnabled: false }).center();
-        }
-        case 'settings':
-            return new THREE.TorusKnotGeometry(0.7, 0.25, 100, 16).center();
-        case 'bot':
-            return new THREE.BoxGeometry(1.5, 1.5, 1.5).center();
-        case 'database':
-            return new THREE.CylinderGeometry(0.8, 0.8, 0.4, 32).rotateX(Math.PI / 2).center();
-    }
-    return new THREE.BoxGeometry(1, 1, 1).center();
-};
+
+const createRobotMesh = (): THREE.Group => {
+    const group = new THREE.Group();
+    const head = new THREE.Mesh(
+        new THREE.BoxGeometry(0.8, 0.8, 0.8),
+        new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.5, metalness: 0.8 })
+    );
+    head.position.y = 0.6;
+    group.add(head);
+
+    const body = new THREE.Mesh(
+        new THREE.BoxGeometry(0.6, 1.0, 0.4),
+        new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.6, metalness: 0.7 })
+    );
+    group.add(body);
+
+    const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+    const eye1 = new THREE.Mesh(new THREE.CircleGeometry(0.1, 16), eyeMaterial);
+    eye1.position.set(-0.2, 0.7, 0.41);
+    group.add(eye1);
+    
+    const eye2 = eye1.clone();
+    eye2.position.x = 0.2;
+    group.add(eye2);
+
+    return group;
+}
 
 
 const ProjectDetails = ({ project }: { project: Project }) => {
@@ -127,9 +127,9 @@ const ProjectDetails = ({ project }: { project: Project }) => {
 const Projects = () => {
     const mountRef = useRef<HTMLDivElement>(null);
     const [selectedProject, setSelectedProject] = useState<Project>(projectsData[0]);
-    const iconsRef = useRef<THREE.Mesh[]>([]);
-    const morphRef = useRef<{ mesh: THREE.Mesh | null, influences: number[] }>({ mesh: null, influences: [] });
-    const [hoveredIcon, setHoveredIcon] = useState<THREE.Object3D | null>(null);
+    const robotsRef = useRef<(THREE.Group & { originalPosition?: THREE.Vector3 })[]>([]);
+    const sceneRef = useRef<{ scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer } | null>(null);
+    const [hoveredRobot, setHoveredRobot] = useState<THREE.Object3D | null>(null);
 
     const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
         if (!mountRef.current) return;
@@ -145,56 +145,35 @@ const Projects = () => {
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
-        camera.position.z = 10;
+        camera.position.set(0, 2, 12);
+        camera.lookAt(scene.position);
+
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
         currentMount.appendChild(renderer.domElement);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        sceneRef.current = { scene, camera, renderer };
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0xBE77FF, 3, 100);
-        pointLight.position.set(5, 5, 10);
+        const pointLight = new THREE.PointLight(0xBE77FF, 10, 100);
+        pointLight.position.set(0, 10, 10);
         scene.add(pointLight);
 
-        // --- Morphing Geometry Setup ---
-        const geometries = projectsData.map(p => createIconGeometry(p.icon));
-        const baseGeometry = geometries[0].clone();
-        baseGeometry.morphAttributes.position = geometries.map(g => g.getAttribute('position'));
-
-        const material = new THREE.MeshStandardMaterial({
-            color: 0xBE77FF,
-            metalness: 0.1,
-            roughness: 0.4,
-            morphTargets: true,
-        });
-
-        const morphMesh = new THREE.Mesh(baseGeometry, material);
-        scene.add(morphMesh);
-        morphRef.current.mesh = morphMesh;
-        morphRef.current.influences = morphMesh.morphTargetInfluences || [];
-
-        const initialProjectIndex = projectsData.findIndex(p => p.title === selectedProject.title);
-        if (initialProjectIndex !== -1 && morphRef.current.influences.length > 0) {
-            morphRef.current.influences[initialProjectIndex] = 1;
-        }
-
-
-        // --- Clickable invisible icons ---
-        iconsRef.current = projectsData.map((project, i) => {
-            const iconMesh = new THREE.Mesh(
-                new THREE.SphereGeometry(1.5, 16, 16),
-                new THREE.MeshBasicMaterial({ visible: false })
-            );
-
-            const angle = (i / projectsData.length) * Math.PI * 2;
-            const radius = 4;
-            iconMesh.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
+        robotsRef.current = projectsData.map((project, i) => {
+            const robot = createRobotMesh();
             
-            iconMesh.userData = { projectData: project, index: i };
-            scene.add(iconMesh);
-            return iconMesh;
+            const angle = (i / projectsData.length) * Math.PI * 2;
+            const radius = 5;
+            robot.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+            robot.lookAt(scene.position);
+            
+            robot.userData = { projectData: project, index: i };
+            robot.originalPosition = robot.position.clone();
+            scene.add(robot);
+            return robot;
         });
 
         const raycaster = new THREE.Raycaster();
@@ -207,17 +186,22 @@ const Projects = () => {
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
             raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(iconsRef.current);
+            const intersects = raycaster.intersectObjects(robotsRef.current, true);
+
             if (intersects.length > 0) {
-                setHoveredIcon(intersects[0].object);
+                 const topObject = intersects[0].object.parent;
+                 if (topObject instanceof THREE.Group) {
+                    setHoveredRobot(topObject);
+                 }
             } else {
-                setHoveredIcon(null);
+                setHoveredRobot(null);
             }
         };
 
         const onClick = () => {
-            if (hoveredIcon) {
-                setSelectedProject((hoveredIcon as THREE.Mesh).userData.projectData);
+            if (hoveredRobot) {
+                const robotData = (hoveredRobot as THREE.Group).userData;
+                setSelectedProject(robotData.projectData);
             }
         };
 
@@ -228,18 +212,25 @@ const Projects = () => {
             animationFrameId = requestAnimationFrame(animate);
             const delta = clock.getDelta();
 
-            iconsRef.current.forEach(icon => {
-                const isSelected = icon.userData.projectData.title === selectedProject.title;
-                const isHovered = icon === hoveredIcon;
+            robotsRef.current.forEach(robot => {
+                 // Orbiting logic
+                if (robot.originalPosition) {
+                    const angle = (performance.now() * 0.0002) + (robot.userData.index / projectsData.length) * Math.PI * 2;
+                    const radius = 5;
+                    robot.originalPosition.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+                }
+
+                // If not selected, follow the orbit
+                if(robot.userData.projectData.title !== selectedProject.title) {
+                    robot.position.lerp(robot.originalPosition!, 0.05);
+                }
                 
-                const targetScale = isSelected ? 1.2 : (isHovered ? 1.1 : 1);
-                icon.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+                robot.lookAt(scene.position);
+
+                const isHovered = robot === hoveredRobot;
+                const targetScale = isHovered ? 1.2 : 1.0;
+                robot.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
             });
-            
-            if (morphRef.current.mesh) {
-                morphRef.current.mesh.rotation.y += delta * 0.2;
-                morphRef.current.mesh.rotation.x += delta * 0.1;
-            }
 
             renderer.render(scene, camera);
         };
@@ -261,30 +252,32 @@ const Projects = () => {
                 }
             }
         };
+    }, [onResize, selectedProject]);
 
-    }, [onResize]);
 
     useEffect(() => {
-        const influences = morphRef.current.influences;
-        if (!influences || influences.length === 0) return;
-
-        const targetIndex = projectsData.findIndex(p => p.title === selectedProject.title);
+        if (!sceneRef.current) return;
+        const { camera } = sceneRef.current;
+        const selectedRobot = robotsRef.current.find(r => r.userData.projectData.title === selectedProject.title);
         
-        // Animate all influences to 0
-        gsap.to(influences, {
-            duration: 0.7,
-            endArray: influences.map(() => 0),
-            ease: "power2.inOut",
-        });
+        if (selectedRobot) {
+            const targetPosition = new THREE.Vector3().setFromMatrixPosition(selectedRobot.matrixWorld);
+            targetPosition.y += 2;
+            targetPosition.z += 4; 
 
-        // Animate the target influence to 1
-        gsap.to(influences, {
-            duration: 0.7,
-            delay: 0.1,
-            [targetIndex]: 1,
-            ease: "power2.inOut",
-        });
-
+            gsap.to(camera.position, {
+                x: targetPosition.x,
+                y: targetPosition.y,
+                z: targetPosition.z,
+                duration: 1.5,
+                ease: "power3.inOut"
+            });
+            gsap.to(camera.rotation, {
+                y: camera.rotation.y, // Maintain some of the existing rotation to avoid jarring snaps
+                duration: 1.5,
+                ease: "power3.inOut"
+            });
+        }
     }, [selectedProject]);
 
 
@@ -295,7 +288,7 @@ const Projects = () => {
                 My Projects
               </h2>
               <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-                An interactive showcase of my work. Hover and click the icons to explore the projects.
+                An interactive showcase of my work. Hover and click the robots to explore the projects.
               </p>
             </div>
             <div className="container grid md:grid-cols-2 gap-8 items-center min-h-[60vh]">

@@ -10,7 +10,6 @@ import Contact from '@/components/sections/contact';
 import Testimonials from '@/components/sections/testimonials';
 import { ScrollAnimation } from '@/components/motion/scroll-animation';
 import SectionBackground from '@/components/3d/section-background';
-import { InteractiveAsteroids } from '@/components/3d/interactive-asteroids';
 import { useEffect, useRef, forwardRef } from 'react';
 
 const FadingHero = forwardRef<HTMLElement>((props, ref) => {
@@ -60,13 +59,10 @@ export default function Home() {
           </ScrollAnimation>
           
           <Projects />
-
-          <div className="relative">
-            <SectionBackground effect="grid" />
-            <ScrollAnimation as="div" id="skills" className="relative z-10">
-              <Skills />
-            </ScrollAnimation>
-          </div>
+          
+          <ScrollAnimation as="div" id="skills" className="relative z-10">
+            <Skills />
+          </ScrollAnimation>
 
           <ScrollAnimation as="section" id="testimonials" className="relative py-16 md:py-24 z-10">
              <div className="container">
