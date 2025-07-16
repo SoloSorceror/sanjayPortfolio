@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Github } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
-import { gsap } from 'gsap';
 import { Badge } from '@/components/ui/badge';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -86,7 +85,7 @@ const createRobotMesh = (): THREE.Group => {
 }
 
 
-const ProjectDetails = ({ project }: { project: Project }) => {
+const ProjectDetails = ({ project }: { project: Project | null }) => {
     if (!project) return null;
 
     return (
@@ -127,7 +126,7 @@ const ProjectDetails = ({ project }: { project: Project }) => {
 const Projects = () => {
     const mountRef = useRef<HTMLDivElement>(null);
     const [selectedProject, setSelectedProject] = useState<Project>(projectsData[0]);
-    const robotsRef = useRef<(THREE.Group & { originalPosition?: THREE.Vector3, originalRotation?: THREE.Euler })[]>([]);
+    const robotsRef = useRef<THREE.Group[]>([]);
     const [hoveredRobot, setHoveredRobot] = useState<THREE.Object3D | null>(null);
 
     const onResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => {
@@ -145,8 +144,6 @@ const Projects = () => {
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
         camera.position.set(0, 2, 12);
-        camera.lookAt(scene.position);
-
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
@@ -178,10 +175,10 @@ const Projects = () => {
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObjects(robotsRef.current, true);
 
-            if (intersects.length > 0) {
-                 const topObject = intersects[0].object.parent;
-                 if (topObject instanceof THREE.Group) {
-                    setHoveredRobot(topObject);
+            const firstIntersectedGroup = intersects[0]?.object.parent;
+            if (firstIntersectedGroup instanceof THREE.Group) {
+                 if (hoveredRobot !== firstIntersectedGroup) {
+                    setHoveredRobot(firstIntersectedGroup);
                  }
             } else {
                 setHoveredRobot(null);
@@ -212,12 +209,12 @@ const Projects = () => {
                  let targetScale = new THREE.Vector3(1, 1, 1);
                  
                  if(isSelected) {
-                     targetPosition.set(0, 0, 3);
-                     targetScale.set(1.5, 1.5, 1.5);
+                     targetPosition.set(0, 0, 4);
+                     targetScale.set(2, 2, 2);
                  } else {
                     const orbitingRobots = robotsRef.current.filter(r => r.userData.projectData.title !== selectedProject.title);
                     const indexInOrbit = orbitingRobots.findIndex(r => r === robot);
-                    const angle = (performance.now() * 0.0002) + (indexInOrbit / orbitingRobots.length) * Math.PI * 2;
+                    const angle = (performance.now() * 0.0003) + (indexInOrbit / orbitingRobots.length) * Math.PI * 2;
                     const radius = 6;
                     targetPosition.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius - 2);
                  }
@@ -228,11 +225,17 @@ const Projects = () => {
 
                  robot.position.lerp(targetPosition, 0.05);
                  robot.scale.lerp(targetScale, 0.1);
-                 robot.rotation.y += delta * 0.2;
+                 
+                 if (isSelected) {
+                    robot.rotation.y += delta * 0.4;
+                 } else {
+                    robot.rotation.y += delta * 0.1;
+                 }
                  robot.lookAt(camera.position);
 
             });
-
+            
+            camera.lookAt(scene.position);
             renderer.render(scene, camera);
         };
         animate();
@@ -269,7 +272,7 @@ const Projects = () => {
                 <div ref={mountRef} className="relative w-full h-[40vh] md:h-[60vh] cursor-pointer" />
                 <div className="relative w-full h-full min-h-[40vh] md:min-h-[60vh] bg-primary/5 rounded-lg flex items-center justify-center backdrop-blur-sm border border-border/20">
                     <AnimatePresence mode="wait">
-                       {selectedProject && <ProjectDetails project={selectedProject} />}
+                       <ProjectDetails project={selectedProject} />
                     </AnimatePresence>
                 </div>
             </div>
