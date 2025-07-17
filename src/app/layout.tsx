@@ -13,10 +13,11 @@ export const metadata: Metadata = {
     siteName: 'SanjayChetry.IO',
     images: [
       {
-        url: '/favicon.png', // Points to public/og-image.png
+        url: 'https://sanjay-portfolio-my6y.vercel.app/preview.png',
         width: 1200,
         height: 630,
       },
+    
     ],
     locale: 'en_US',
     type: 'website',
