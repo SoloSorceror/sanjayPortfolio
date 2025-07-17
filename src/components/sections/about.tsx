@@ -33,7 +33,7 @@ const aboutData = {
         {
             institution: 'Lovely Professional University',
             degree: 'Bachelor of Technology in Computer Science',
-            duration: '2022 - Present',
+            duration: '2023 - Present',
             description: 'Specializing in Data Structures & Algorithms, Object-Oriented Programming, and other core CS principles to build a robust theoretical and practical foundation.'
         },
         {
